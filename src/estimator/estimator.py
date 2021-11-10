@@ -15,7 +15,7 @@ class PoseEstimator:
     out_h, out_w, in_h, in_w = 64, 64, 256, 256
 
     def __init__(self, model_path, model_cfg="", data_cfg="", show=True, device="cuda"):
-        if not model_path or not data_cfg:
+        if not model_cfg or not data_cfg:
             model_cfg, data_cfg, _ = get_corresponding_cfg(model_path, check_exist=["data", "model"])
 
         self.show = show
@@ -41,6 +41,7 @@ class PoseEstimator:
         self.kps = posenet.kps
         self.model.eval()
         posenet.load(model_path)
+        self.HP = HeatmapPredictor(self.out_h, self.out_w, self.in_h, self.in_w)
 
     def estimate(self, img, boxes, batch=8):
         num_batches = len(boxes)//batch
@@ -63,7 +64,7 @@ class PoseEstimator:
         img_metas = []
         inputs = []
         for box in enlarged_boxes:
-            cropped_img = self.crop(box, img)
+            cropped_img = self.transform.SAMPLE.crop(box, img)
             inp, padded_size = self.transform.process_frame(cropped_img, self.out_h, self.out_w, self.in_h, self.in_w)
             inputs.append(inp.tolist())
             img_metas.append({
@@ -72,17 +73,3 @@ class PoseEstimator:
                 "padded_size": padded_size
             })
         return torch.tensor(inputs), img_metas
-
-    @staticmethod
-    def crop(box, img):
-        x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
-        x1 = 0 if x1 < 0 else x1
-        y1 = 0 if y1 < 0 else y1
-        x2 = img.shape[1] if x2 > img.shape[1] else x2
-        y2 = img.shape[0] if y2 > img.shape[0] else y2
-        cropped_img = np.asarray(img[y1: y2, x1: x2])
-        return cropped_img
-
-
-
-
