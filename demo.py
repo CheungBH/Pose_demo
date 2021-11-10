@@ -10,12 +10,12 @@ fps = 12
 
 
 class Demo:
-    def __init__(self, show=True):
+    def __init__(self):
         self.FP = FrameProcessor(config.detector_cfg, config.detector_weight, config.pose_weight,
                                  config.pose_model_cfg, config.pose_data_cfg)
         self.input = config.input_src
         self.output = config.output_src
-        self.show = show
+        self.show = config.show
         self.save_size = config.out_size
         self.show_size = config.show_size
         if os.path.isdir(self.input):
