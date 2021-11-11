@@ -11,8 +11,8 @@ class FrameProcessor:
         self.HP = HumanDetector(detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg)
 
     def process(self, frame):
-        id2box, kps, kps_scores = self.HP.process(frame)
-        self.HP.visualize(frame, id2box, kps, kps_scores)
+        ids, boxes, kps, kps_scores = self.HP.process(frame)
+        self.HP.visualize(frame, ids, boxes, kps, kps_scores)
 
 
 if __name__ == '__main__':

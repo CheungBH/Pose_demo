@@ -30,7 +30,7 @@ class Demo:
             self.demo_type = "video"
             self.cap = cv2.VideoCapture(self.input)
             if self.output:
-                self.out = cv2.VideoWriter(self.output, fourcc, fps, config.out_size)
+                self.out = cv2.VideoWriter(self.output, fourcc, fps, save_size)
         else:
             ext = os.path.basename(self.input)
             if ext in image_ext:
@@ -40,7 +40,7 @@ class Demo:
                 self.demo_type = "video"
                 self.cap = cv2.VideoCapture(self.input)
                 if self.output:
-                    self.out = cv2.VideoWriter(self.output, fourcc, fps, config.out_size)
+                    self.out = cv2.VideoWriter(self.output, fourcc, fps, save_size)
             else:
                 raise ValueError("Unrecognized src: {}".format(self.input))
 
