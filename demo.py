@@ -8,16 +8,19 @@ video_ext = ["mp4", "mov", "avi", "mkv"]
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 fps = 12
 
+save_size = config.out_size
+show_size = config.show_size
+show = config.show
+
 
 class Demo:
-    def __init__(self):
-        self.FP = FrameProcessor(config.detector_cfg, config.detector_weight, config.pose_weight,
-                                 config.pose_model_cfg, config.pose_data_cfg)
-        self.input = config.input_src
-        self.output = config.output_src
-        self.show = config.show
-        self.save_size = config.out_size
-        self.show_size = config.show_size
+    def __init__(self, input_src, output_src):
+        self.FP = FrameProcessor()
+        self.input = input_src
+        self.output = output_src
+        self.show = show
+        self.save_size = save_size
+        self.show_size = show_size
         if os.path.isdir(self.input):
             self.demo_type = "image_folder"
             self.input_imgs = [os.path.join(self.input, file_name) for file_name in os.listdir(self.input)]
@@ -75,4 +78,12 @@ class Demo:
                     cv2.imwrite(self.output_imgs[idx], cv2.resize(frame, self.save_size))
         else:
             raise ValueError
+
+
+if __name__ == '__main__':
+    import config.config as config
+    input_src = config.input_src
+    output_src = config.output_src
+    demo = Demo(input_src, output_src)
+    demo.run()
 
