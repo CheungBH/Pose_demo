@@ -46,10 +46,11 @@ class Demo:
 
     def run(self):
         if self.demo_type == "video":
+            idx = 0
             while True:
                 ret, frame = self.cap.read()
                 if ret:
-                    self.FP.process(frame)
+                    self.FP.process(frame, cnt=idx)
                     if self.show:
                         cv2.imshow("result", cv2.resize(frame, self.show_size))
                         cv2.waitKey(1)
@@ -59,6 +60,7 @@ class Demo:
                     self.cap.release()
                     if self.output:
                         self.out.release()
+                idx += 1
         elif self.demo_type == "image":
             frame = self.input_img
             self.FP.process(frame)
@@ -70,7 +72,7 @@ class Demo:
         elif self.demo_type == "image_folder":
             for idx, img_name in enumerate(self.input_imgs):
                 frame = cv2.imread(img_name)
-                self.FP.process(frame)
+                self.FP.process(frame, cnt=idx)
                 if self.show:
                     cv2.imshow("result", cv2.resize(frame, self.show_size))
                     cv2.waitKey(1000)

@@ -13,3 +13,4 @@ out_size = (1080, 720)
 show_size = (1080, 720)
 show = True
 
+write_json = True
