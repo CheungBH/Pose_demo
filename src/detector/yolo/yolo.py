@@ -33,6 +33,8 @@ class YoloDetector:
             for det in dets:
                 if det is not None and len(det):
                     det[:, :4] = scale_coords(img.shape[2:], det[:, :4], original_shape).round()
+            if dets[0] is None:
+                return []
             return dets[0].cpu()
 
 

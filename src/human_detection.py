@@ -13,17 +13,20 @@ class HumanDetector:
         self.tracker = PersonTracker()
 
     def process(self, frame):
+        self.ids, self.boxes, self.kps, self.kps_scores = [], [], [], []
         dets = self.detector.detect(frame)
-        ids, boxes = self.tracker.track(dets)
-        self.kps, self.kps_scores = self.estimator.estimate(frame, boxes)
-        return ids, boxes, self.kps, self.kps_scores
+        if len(dets) > 0:
+            self.ids, self.boxes = self.tracker.track(dets)
+            self.kps, self.kps_scores = self.estimator.estimate(frame, self.boxes)
+        return self.ids, self.boxes, self.kps, self.kps_scores
 
     def visualize(self, img):
-        from .tracker.visualize import IDVisualizer
-        from .estimator.visualize import KeyPointVisualizer
-        id2box = self.tracker.get_id2bbox()
-        IDVisualizer().plot_bbox_id(id2box, img, with_bbox=True)
-        KeyPointVisualizer(self.estimator.kps, "coco").visualize(img, self.kps, self.kps_scores)
+        if self.boxes:
+            from .tracker.visualize import IDVisualizer
+            from .estimator.visualize import KeyPointVisualizer
+            id2box = self.tracker.get_id2bbox()
+            IDVisualizer().plot_bbox_id(id2box, img, with_bbox=True)
+            KeyPointVisualizer(self.estimator.kps, "coco").visualize(img, self.kps, self.kps_scores)
 
 
 if __name__ == '__main__':
