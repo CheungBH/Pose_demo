@@ -15,15 +15,15 @@ class HumanDetector:
     def process(self, frame):
         dets = self.detector.detect(frame)
         ids, boxes = self.tracker.track(dets)
-        kps, kps_scores = self.estimator.estimate(frame, boxes)
-        return ids, boxes, kps, kps_scores
+        self.kps, self.kps_scores = self.estimator.estimate(frame, boxes)
+        return ids, boxes, self.kps, self.kps_scores
 
-    def visualize(self, img, ids, boxes, kps, scores):
+    def visualize(self, img):
         from .tracker.visualize import IDVisualizer
         from .estimator.visualize import KeyPointVisualizer
         id2box = self.tracker.get_id2bbox()
         IDVisualizer().plot_bbox_id(id2box, img, with_bbox=True)
-        KeyPointVisualizer(self.estimator.kps, "coco").visualize(img, kps, scores)
+        KeyPointVisualizer(self.estimator.kps, "coco").visualize(img, self.kps, self.kps_scores)
 
 
 if __name__ == '__main__':

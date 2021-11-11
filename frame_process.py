@@ -12,7 +12,7 @@ class FrameProcessor:
 
     def process(self, frame):
         ids, boxes, kps, kps_scores = self.HP.process(frame)
-        self.HP.visualize(frame, ids, boxes, kps, kps_scores)
+        self.HP.visualize(frame)
 
 
 if __name__ == '__main__':
