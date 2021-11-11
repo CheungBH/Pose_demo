@@ -25,21 +25,30 @@ class Demo:
             self.demo_type = "image_folder"
             self.input_imgs = [os.path.join(self.input, file_name) for file_name in os.listdir(self.input)]
             if self.output:
+                assert os.path.isdir(self.output), "The output should be a folder when the input is a folder!"
+                os.makedirs(self.output, exist_ok=True)
                 self.output_imgs = [os.path.join(self.output, file_name) for file_name in os.listdir(self.output)]
         elif isinstance(self.input, int):
             self.demo_type = "video"
             self.cap = cv2.VideoCapture(self.input)
             if self.output:
+                out_ext = self.output.split(".")[-1]
+                assert out_ext in video_ext, "The output should be a video when the input is webcam!"
                 self.out = cv2.VideoWriter(self.output, fourcc, fps, save_size)
         else:
             ext = self.input.split(".")[-1]
             if ext in image_ext:
                 self.demo_type = "image"
                 self.input_img = cv2.imread(self.input)
+                if self.output:
+                    out_ext = self.output.split(".")[-1]
+                    assert out_ext in image_ext, "The output should be an image when the input is an image!"
             elif ext in video_ext:
                 self.demo_type = "video"
                 self.cap = cv2.VideoCapture(self.input)
                 if self.output:
+                    out_ext = self.output.split(".")[-1]
+                    assert out_ext in video_ext, "The output should be a video when the input is a video!"
                     self.out = cv2.VideoWriter(self.output, fourcc, fps, save_size)
             else:
                 raise ValueError("Unrecognized src: {}".format(self.input))
