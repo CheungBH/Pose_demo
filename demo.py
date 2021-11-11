@@ -3,7 +3,7 @@ import config.config as config
 import os
 import cv2
 
-image_ext = [".jpg", ".jpeg", ".webp", ".bmp", ".png"]
+image_ext = ["jpg", "jpeg", "webp", "bmp", "png"]
 video_ext = ["mp4", "mov", "avi", "mkv"]
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 fps = 12
@@ -32,7 +32,7 @@ class Demo:
             if self.output:
                 self.out = cv2.VideoWriter(self.output, fourcc, fps, save_size)
         else:
-            ext = os.path.basename(self.input)
+            ext = self.input.split(".")[-1]
             if ext in image_ext:
                 self.demo_type = "image"
                 self.input_img = cv2.imread(self.input)
