@@ -140,7 +140,7 @@ class KeyPointVisualizer:
                 cor_x, cor_y = int(kp_preds[n, 0]), int(kp_preds[n, 1])
                 cor_conf = kp_confs[n, 0]
 
-                if cor_x == 0 or cor_y == 0 or cor_conf < 0.05:
+                if cor_x == 0 or cor_y == 0 or cor_conf < 0.4:
                     continue
 
                 part_line[n] = (cor_x, cor_y)

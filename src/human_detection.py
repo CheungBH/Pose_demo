@@ -1,5 +1,6 @@
 import cv2
 import torch
+import time
 
 from .detector.detector import PersonDetector
 from .estimator.estimator import PoseEstimator
@@ -14,13 +15,23 @@ class HumanDetector:
         self.estimator = PoseEstimator(estimator_weight, estimator_model_cfg, estimator_data_cfg)
         self.tracker = PersonTracker()
 
-    def process(self, frame):
+    def process(self, frame, print_time=False):
         with torch.no_grad():
             self.ids, self.boxes, self.kps, self.kps_scores = [], [], [], []
+            if print_time:
+                curr_time = time.time()
             dets = self.detector.detect(frame)
+            if print_time:
+                print("Detector uses: {}s".format(round((time.time() - curr_time), 4)))
+                curr_time = time.time()
             if len(dets) > 0:
                 self.ids, self.boxes = self.tracker.track(dets)
+                if print_time:
+                    print("Tracker uses: {}s".format(round((time.time() - curr_time), 4)))
+                    curr_time = time.time()
                 self.kps, self.kps_scores = self.estimator.estimate(frame, self.boxes)
+                if print_time:
+                    print("Pose estimator uses: {}s".format(round((time.time() - curr_time), 4)))
             self.convert_result_to_tensor()
             return self.ids, self.boxes, self.kps, self.kps_scores
 

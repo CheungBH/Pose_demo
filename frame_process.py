@@ -28,7 +28,7 @@ class FrameProcessor:
         self.visualizer = Visualizer(self.HP.estimator.kps)
 
     def process(self, frame, cnt=0):
-        ids, boxes, kps, kps_scores = self.HP.process(frame)
+        ids, boxes, kps, kps_scores = self.HP.process(frame, print_time=True)
         # self.HP.visualize(frame)
         ids, boxes, kps, kps_scores = self.filter.filter(ids, boxes, kps, kps_scores, cnt)
         if self.write_json:

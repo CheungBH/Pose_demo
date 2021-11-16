@@ -43,7 +43,7 @@ class PoseEstimator:
         posenet.load(model_path)
         self.HP = HeatmapPredictor(self.out_h, self.out_w, self.in_h, self.in_w)
 
-    def estimate(self, img, boxes, batch=8):
+    def estimate(self, img, boxes, batch=4):
         num_batches = len(boxes)//batch
         left_over = len(boxes) % batch
         inputs, img_metas = self.preprocess(img, boxes)
