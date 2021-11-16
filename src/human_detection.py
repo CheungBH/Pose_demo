@@ -5,6 +5,8 @@ from .detector.detector import PersonDetector
 from .estimator.estimator import PoseEstimator
 from .tracker.tracker import PersonTracker
 
+tensor = torch.Tensor
+
 
 class HumanDetector:
     def __init__(self, detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg):
@@ -18,7 +20,12 @@ class HumanDetector:
         if len(dets) > 0:
             self.ids, self.boxes = self.tracker.track(dets)
             self.kps, self.kps_scores = self.estimator.estimate(frame, self.boxes)
+        self.convert_result_to_tensor()
         return self.ids, self.boxes, self.kps, self.kps_scores
+
+    def convert_result_to_tensor(self):
+        self.ids = tensor(self.ids)
+        self.boxes = tensor(self.boxes)
 
     def visualize(self, img):
         if self.boxes:
