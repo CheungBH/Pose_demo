@@ -8,9 +8,10 @@ class Visualizer:
         self.BBV = BBoxVisualizer()
 
     def visualize(self, image, ids, boxes, kps, kps_scores=()):
-        self.BBV.visualize(boxes, image)
-        self.IDV.plot_bbox_id(self.get_id2bbox(ids, boxes), image)
-        self.KPV.visualize(image, kps, kps_scores)
+        if len(ids) > 0:
+            self.BBV.visualize(boxes, image)
+            self.IDV.plot_bbox_id(self.get_id2bbox(ids, boxes), image)
+            self.KPV.visualize(image, kps, kps_scores)
 
     @staticmethod
     def get_id2bbox(ids, boxes):

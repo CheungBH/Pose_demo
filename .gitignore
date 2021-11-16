@@ -40,3 +40,4 @@ video_process_with_txt_jump.py
 *.avi
 *.onnx
 *.mp4
+result.json

@@ -9,6 +9,9 @@ class JsonGenerator:
         self.result = {}
 
     def update(self, idx, boxes, kps, kps_scores, cnt):
+        if len(idx) == 0:
+            self.result[cnt] = {}
+            return
         idx, boxes, kps, kps_scores = idx.tolist(), boxes.tolist(), kps.tolist(), kps_scores.tolist()
         current_res = {}
         for i, box, kp, kp_score in zip(idx, boxes, kps, kps_scores):
