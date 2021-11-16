@@ -18,7 +18,7 @@ class FrameProcessor:
         if write_json:
             if not config.json_path:
                 try:
-                    json_path = config.input_src[:-4] + ".json"
+                    json_path = config.input_src[:-len(config.input_src.split(".")[-1]) - 1] + ".json"
                 except:
                     json_path = "result.json"
             else:
