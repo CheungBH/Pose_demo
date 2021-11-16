@@ -8,7 +8,6 @@ from utils.visualize import Visualizer
 detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg = config.detector_cfg, \
                                 config.detector_weight, config.pose_weight, config.pose_model_cfg, config.pose_data_cfg
 write_json = config.write_json
-json_path = config.json_path
 filter_criterion = config.filter_criterion
 
 
@@ -17,11 +16,13 @@ class FrameProcessor:
         self.HP = HumanDetector(detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg)
         self.write_json = write_json
         if write_json:
-            if not json_path:
+            if not config.json_path:
                 try:
-                    json_path = config.input_src.split(".")[-1] + ".json"
+                    json_path = config.input_src[:-4] + ".json"
                 except:
                     json_path = "result.json"
+            else:
+                json_path = ""
             self.Json = JsonGenerator(json_path)
         self.filter = ResultFilterer(filter_criterion)
         self.visualizer = Visualizer(self.HP.estimator.kps)

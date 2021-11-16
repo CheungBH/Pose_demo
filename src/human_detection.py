@@ -15,13 +15,14 @@ class HumanDetector:
         self.tracker = PersonTracker()
 
     def process(self, frame):
-        self.ids, self.boxes, self.kps, self.kps_scores = [], [], [], []
-        dets = self.detector.detect(frame)
-        if len(dets) > 0:
-            self.ids, self.boxes = self.tracker.track(dets)
-            self.kps, self.kps_scores = self.estimator.estimate(frame, self.boxes)
-        self.convert_result_to_tensor()
-        return self.ids, self.boxes, self.kps, self.kps_scores
+        with torch.no_grad():
+            self.ids, self.boxes, self.kps, self.kps_scores = [], [], [], []
+            dets = self.detector.detect(frame)
+            if len(dets) > 0:
+                self.ids, self.boxes = self.tracker.track(dets)
+                self.kps, self.kps_scores = self.estimator.estimate(frame, self.boxes)
+            self.convert_result_to_tensor()
+            return self.ids, self.boxes, self.kps, self.kps_scores
 
     def convert_result_to_tensor(self):
         self.ids = tensor(self.ids)

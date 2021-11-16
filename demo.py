@@ -2,6 +2,7 @@ from frame_process import FrameProcessor
 import config.config as config
 import os
 import cv2
+import time
 
 image_ext = ["jpg", "jpeg", "webp", "bmp", "png"]
 video_ext = ["mp4", "mov", "avi", "mkv", "MP4"]
@@ -59,17 +60,20 @@ class Demo:
             while True:
                 ret, frame = self.cap.read()
                 if ret:
+                    time_begin = time.time()
                     self.FP.process(frame, cnt=idx)
+                    print("Processing time is {}".format(round(time.time() - time_begin), 4))
                     if self.show:
                         cv2.imshow("result", cv2.resize(frame, self.show_size))
                         cv2.waitKey(1)
                     if self.output:
                         self.out.write(cv2.resize(frame, self.save_size))
                 else:
-                    self.cap.release()
                     self.FP.release()
+                    self.cap.release()
                     if self.output:
                         self.out.release()
+                    break
                 idx += 1
         elif self.demo_type == "image":
             frame = self.input_img
