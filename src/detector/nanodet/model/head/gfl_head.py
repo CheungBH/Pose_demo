@@ -5,7 +5,7 @@ import torch.distributed as dist
 import torch.nn as nn
 import torch.nn.functional as F
 
-from nanodet.util import (
+from ...util import (
     bbox2distance,
     distance2bbox,
     images_to_levels,

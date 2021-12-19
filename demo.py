@@ -4,7 +4,7 @@ import os
 import cv2
 import time
 
-image_ext = ["jpg", "jpeg", "webp", "bmp", "png"]
+image_ext = ["jpg", "jpeg", "webp", "bmp", "png", "JPG"]
 video_ext = ["mp4", "mov", "avi", "mkv", "MP4"]
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 fps = 12

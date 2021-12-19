@@ -15,7 +15,7 @@
 import torch
 import torch.nn as nn
 
-from nanodet.util import multi_apply
+from ...util import multi_apply
 
 from ..module.conv import ConvModule, DepthwiseConvModule
 from ..module.init_weights import normal_init

@@ -5,10 +5,10 @@ import time
 import cv2
 import torch
 
-from nanodet.data.transform import Pipeline
-from nanodet.model.arch import build_model
-from nanodet.util import Logger, cfg, load_config, load_model_weight
-from nanodet.util.path import mkdir
+from .data.transform import Pipeline
+from .model.arch import build_model
+from .util import Logger, cfg, load_config, load_model_weight
+from .util.path import mkdir
 
 image_ext = [".jpg", ".jpeg", ".webp", ".bmp", ".png"]
 video_ext = ["mp4", "mov", "avi", "mkv"]
