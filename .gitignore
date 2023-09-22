@@ -1,4 +1,4 @@
-S.DS_Store
+*.DS_Store
 datasets/
 checkpoints/
 results/
