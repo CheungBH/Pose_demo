@@ -39,6 +39,11 @@ class PoseEstimator:
         posenet.build(model_cfg)
         self.model = posenet.model
         self.kps = posenet.kps
+        if os.path.exists(option_file):
+            if hasattr(torch.load(option_file), "thresh"):
+                self.thresh = torch.load(option_file).thresh
+        else:
+            self.thresh = torch.tensor([0.1 for _ in range(self.kps)])
         self.model.eval()
         posenet.load(model_path)
         self.HP = HeatmapPredictor(self.out_h, self.out_w, self.in_h, self.in_w)
