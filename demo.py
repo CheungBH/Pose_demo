@@ -1,5 +1,5 @@
 from frame_process import FrameProcessor
-import config.config as config
+import config as config
 import os
 import cv2
 import time
@@ -45,6 +45,13 @@ class Demo:
                     out_ext = self.output.split(".")[-1]
                     assert out_ext in image_ext, "The output should be an image when the input is an image!"
             elif ext in video_ext:
+                self.demo_type = "video"
+                self.cap = cv2.VideoCapture(self.input)
+                if self.output:
+                    out_ext = self.output.split(".")[-1]
+                    assert out_ext in video_ext, "The output should be a video when the input is a video!"
+                    self.out = cv2.VideoWriter(self.output, fourcc, fps, save_size)
+            elif 'rtsp' in self.input:
                 self.demo_type = "video"
                 self.cap = cv2.VideoCapture(self.input)
                 if self.output:
@@ -99,9 +106,10 @@ class Demo:
 
 
 if __name__ == '__main__':
-    import config.config as config
+    import config as config
     input_src = config.input_src
     output_src = config.output_src
     demo = Demo(input_src, output_src)
     demo.run()
+
 

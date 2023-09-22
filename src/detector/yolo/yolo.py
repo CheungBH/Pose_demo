@@ -6,7 +6,8 @@ device = "cuda:0"
 
 
 class YoloDetector:
-    def __init__(self, cfg, weight, img_size=416, conf_thresh=0.4, nms_thresh=0.5):
+    def __init__(self, cfg, weight, img_size=416, conf_thresh=0.8
+                 , nms_thresh=0.5):
         self.img_size = img_size
         self.model = Darknet(cfg, img_size)
         if weight.endswith('.pt'):  # pytorch format

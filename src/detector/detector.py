@@ -1,6 +1,6 @@
 from .yolo.yolo import YoloDetector
-from .nanodet.nanodet import NanoDetector
-from .nanodet.util import Logger, cfg, load_config
+# from .nanodet.nanodet import NanoDetector
+# from .nanodet.util import Logger, cfg, load_config
 
 import torch
 

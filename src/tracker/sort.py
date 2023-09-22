@@ -142,12 +142,13 @@ class KalmanBoxTracker(object):
 
 
 class Sort(object):
-  def __init__(self, max_age=1, min_hits=0):
+  def __init__(self, max_age=1, min_hits=0, iou_threshold=0.3):
     """
     Sets key parameters for SORT
     """
     self.max_age = max_age
     self.min_hits = min_hits
+    self.iou_threshold = iou_threshold
     self.trackers = []
     self.frame_count = 0
     self.iou_matrix = []
@@ -175,7 +176,7 @@ class Sort(object):
     # mat_str = [ls2str(item) for item in matrix]
     return matrix
 
-  def associate_detections_to_trackers(self,detections, trackers, iou_threshold=0.3):
+  def associate_detections_to_trackers(self, detections, trackers):
     """
     Assigns detections to tracked object (both represented as bounding boxes)
     Returns 3 lists of matches, unmatched_detections and unmatched_trackers
@@ -201,7 +202,7 @@ class Sort(object):
     # filter out matched with low IOU
     matches = []
     for m in self.match_indices:
-      if (self.iou_matrix[m[0], m[1]] < iou_threshold):
+      if (self.iou_matrix[m[0], m[1]] < self.iou_threshold):
         unmatched_detections.append(m[0])
         unmatched_trackers.append(m[1])
       else:

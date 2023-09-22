@@ -1,12 +1,14 @@
 from src.human_detection import HumanDetector
 import cv2
-import config.config as config
+import config as config
 from utils.generate_json import JsonGenerator
 from utils.filter_result import ResultFilterer
 from utils.visualize import Visualizer
 
+
 detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg = config.detector_cfg, \
                                 config.detector_weight, config.pose_weight, config.pose_model_cfg, config.pose_data_cfg
+detector_label = config.detector_label
 write_json = config.write_json
 filter_criterion = config.filter_criterion
 
@@ -25,15 +27,16 @@ class FrameProcessor:
                 json_path = ""
             self.Json = JsonGenerator(json_path)
         self.filter = ResultFilterer(filter_criterion)
-        self.visualizer = Visualizer(self.HP.estimator.kps)
+        self.visualizer = Visualizer(self.HP.estimator.kps, detector_label)
 
     def process(self, frame, cnt=0):
-        ids, boxes, kps, kps_scores = self.HP.process(frame, print_time=True)
-        # self.HP.visualize(frame)
-        ids, boxes, kps, kps_scores = self.filter.filter(ids, boxes, kps, kps_scores, cnt)
+        ids, boxes, boxes_cls, kps, kps_scores = self.HP.process(frame, print_time=True)
+        ids, boxes, boxes_cls, kps, kps_scores = self.filter.filter(ids, boxes, boxes_cls, kps, kps_scores, cnt)
+        self.visualizer.visualize(frame, ids, boxes, boxes_cls, kps, kps_scores)
+
         if self.write_json:
             self.Json.update(ids, boxes, kps, kps_scores, cnt)
-        self.visualizer.visualize(frame, ids, boxes, kps, kps_scores)
+
 
     def release(self):
         if self.write_json:
@@ -51,3 +54,4 @@ if __name__ == '__main__':
     FP.process(img)
     cv2.imshow("result", cv2.resize(img, (1080, 720)))
     cv2.waitKey(0)
+

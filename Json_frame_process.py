@@ -1,6 +1,6 @@
 import os
 import cv2
-import config.config as config
+import config as config
 from utils.parse_json import JsonParser
 from utils.filter_result import ResultFilterer
 from utils.visualize import Visualizer
@@ -17,7 +17,7 @@ class FrameProcessorJson:
                 raise FileNotFoundError("Your json file isn't exist")
         self.Json = JsonParser(json_path)
         self.filter = ResultFilterer(filter_criterion)
-        self.visualizer = Visualizer(13)
+        self.visualizer = Visualizer(17)
 
     def process(self, frame, cnt=0):
         # self.HP.visualize(frame)
