@@ -13,7 +13,7 @@ pose_data_cfg = ""
 
 #input_src = TherVideoCap
 output_src = ""
-input_src = "/home/hkuit155/Documents/Highlight2/TOP_100_SHOTS_&_RALLIES_2022_ATP_SEASON_91.mp4"
+input_src = "/home/hkuit155/Documents/Highlight2/TOP_100_SHOTS_&_RALLIES_2022_ATP_SEASON_89.mp4"
 #output_src = "/media/hkuit164/Backup/free_1_thermal (online-video-cutter.com)_detectionresult.mp4"
 out_size = (1280, 720)
 show_size = (1280, 720)
@@ -25,7 +25,7 @@ filter_criterion = {}
 
 
 '''Inner parameters'''
-det_conf = 0.5
+det_conf = 0.1
 det_nms = 0.05
 
 kps_conf = 0.05
@@ -36,6 +36,6 @@ if os.path.exists(option_path):
         kps_conf = info.thresh
 ball_conf = 0.05
 
-max_age = 1
-min_hints = 0
+max_age = 5
+min_hints = 3
 iou_thresh = 0.3

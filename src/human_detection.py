@@ -17,6 +17,8 @@ class HumanDetector:
     def __init__(self, detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg,
                  debug=True):
         self.debug = debug
+        if debug:
+            self.tracker_map = cv2.VideoWriter("traker_map.mp4", cv2.VideoWriter_fourcc(*'mp4v'), 10, (3000, 1200))
         self.detector = PersonDetector(detector_cfg, detector_weight)
         self.estimator = PoseEstimator(estimator_weight, estimator_model_cfg, estimator_data_cfg)
         self.tracker = PersonTracker()
@@ -41,14 +43,18 @@ class HumanDetector:
                     plot_id_box(self.tracker.get_id2bbox(), pred_map, (0, 255, 0), "up")
                     plot_id_box(self.tracker.get_pred(), pred_map, (0, 0, 255), "down")
                     tracking_map = np.concatenate([iou_map, pred_map], axis=1)
+                    self.tracker_map.write(cv2.resize(tracking_map, (3000, 1200)))
                     cv2.imshow("tracking_map", imutils.resize(tracking_map, width=1000))
 
                 if print_time:
                     print("Tracker uses: {}s".format(round((time.time() - curr_time), 4)))
                     curr_time = time.time()
-                self.kps, self.kps_scores = self.estimator.estimate(frame, self.boxes)
-                if print_time:
-                    print("Pose estimator uses: {}s".format(round((time.time() - curr_time), 4)))
+                if self.boxes:
+                    self.kps, self.kps_scores = self.estimator.estimate(frame, self.boxes)
+                    if print_time:
+                        print("Pose estimator uses: {}s".format(round((time.time() - curr_time), 4)))
+                else:
+                    return torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([])
             self.convert_result_to_tensor()
             return self.ids, self.boxes, self.dets_cls, self.kps, self.kps_scores
 
