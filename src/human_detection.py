@@ -5,7 +5,6 @@ import copy
 import imutils
 import numpy as np
 
-
 from .detector.detector import PersonDetector
 from .estimator.estimator import PoseEstimator
 from .tracker.tracker import PersonTracker
@@ -15,13 +14,13 @@ tensor = torch.Tensor
 
 class HumanDetector:
     def __init__(self, detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg,
-                 debug=True):
+                 sort_type, deepsort_weight, debug=True):
         self.debug = debug
         if debug:
             self.tracker_map = cv2.VideoWriter("traker_map.mp4", cv2.VideoWriter_fourcc(*'mp4v'), 10, (3000, 1200))
         self.detector = PersonDetector(detector_cfg, detector_weight)
         self.estimator = PoseEstimator(estimator_weight, estimator_model_cfg, estimator_data_cfg)
-        self.tracker = PersonTracker()
+        self.tracker = PersonTracker(sort_type, model_path=deepsort_weight)
 
     def process(self, frame, print_time=False):
         with torch.no_grad():
@@ -34,7 +33,7 @@ class HumanDetector:
                 curr_time = time.time()
             if len(dets) > 0:
                 self.dets_cls = dets[:, -1]
-                self.ids, self.boxes = self.tracker.track(dets)
+                self.ids, self.boxes = self.tracker.update(dets, copy.deepcopy(frame))
                 if self.debug:
                     from .tracker.visualize import plot_id_box
                     import imutils
@@ -75,7 +74,7 @@ class HumanDetector:
 if __name__ == '__main__':
     from detector.nanodet.nanodet import NanoDetector
     from detector.nanodet.util import Logger, cfg, load_config
-    from tracker.sort import Sort
+    from src.tracker.box_sort.sort import Sort
     from tracker.visualize import IDVisualizer
     from estimator.estimator import PoseEstimator
     from estimator.visualize import KeyPointVisualizer

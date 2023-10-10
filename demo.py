@@ -67,6 +67,8 @@ class Demo:
             while True:
                 ret, frame = self.cap.read()
                 if ret:
+                    idx += 1
+                    print("Processing frame {}".format(idx))
                     time_begin = time.time()
                     self.FP.process(frame, cnt=idx)
                     print("Processing time is {}".format(round(time.time() - time_begin), 4))
