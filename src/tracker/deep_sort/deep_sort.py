@@ -44,8 +44,10 @@ class DeepSort(object):
 
         # output bbox identities
         outputs = []
-        for track in self.tracker.tracks:
+        for idx, track in enumerate(self.tracker.tracks):
             if not track.is_confirmed() or track.time_since_update > 1:
+                continue
+            if idx in self.tracker.unmatched_tracks:
                 continue
             box = track.to_tlwh()
             x1,y1,x2,y2 = self._tlwh_to_xyxy(box)
