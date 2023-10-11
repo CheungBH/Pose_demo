@@ -11,7 +11,7 @@ pose_weight = "/home/hkuit155/Desktop/PortableTennis/assets/pose/mob3/mob_bs8_0.
 pose_model_cfg = ""
 pose_data_cfg = ""
 
-sort_type = "deepsort" # "sort" or "deepsort"
+sort_type = "sort" # "sort" or "deepsort"
 deepsort_weight = "/home/hkuit155/Desktop/PortableTennis/assets/deepsort/ckpt.t7"
 
 #input_src = TherVideoCap
