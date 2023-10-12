@@ -1,6 +1,6 @@
 import os, torch
 
-device = "cpu" # "cuda:0" or "cpu"
+device = "cuda:0" # "cuda:0" or "cpu"
 
 detector_cfg = "/home/hkuit155/Desktop/PortableTennis/assets/yolo/4cls/cfg.cfg"
 detector_weight = "/home/hkuit155/Desktop/PortableTennis/assets/yolo/4cls/last.pt"
