@@ -12,12 +12,13 @@ detector_label = config.detector_label
 write_json = config.write_json
 filter_criterion = config.filter_criterion
 sort_type, deepsort_weight = config.sort_type, config.deepsort_weight
+device = config.device
 
 
 class FrameProcessor:
     def __init__(self):
         self.HP = HumanDetector(detector_cfg, detector_weight, estimator_weight, estimator_model_cfg,
-                                estimator_data_cfg, sort_type, deepsort_weight)
+                                estimator_data_cfg, sort_type, deepsort_weight, device=device)
         self.write_json = write_json
         if write_json:
             if not config.json_path:

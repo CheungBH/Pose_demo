@@ -14,13 +14,14 @@ tensor = torch.Tensor
 
 class HumanDetector:
     def __init__(self, detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg,
-                 sort_type, deepsort_weight, debug=True):
+                 sort_type, deepsort_weight, device="cuda:0", debug=True):
         self.debug = debug
+        self.device = device
         if debug:
             self.tracker_map = cv2.VideoWriter("traker_map.mp4", cv2.VideoWriter_fourcc(*'mp4v'), 10, (3000, 1200))
-        self.detector = PersonDetector(detector_cfg, detector_weight)
-        self.estimator = PoseEstimator(estimator_weight, estimator_model_cfg, estimator_data_cfg)
-        self.tracker = PersonTracker(sort_type, model_path=deepsort_weight)
+        self.detector = PersonDetector(detector_cfg, detector_weight, device)
+        self.estimator = PoseEstimator(estimator_weight, estimator_model_cfg, estimator_data_cfg, device=device)
+        self.tracker = PersonTracker(sort_type, device=device, model_path=deepsort_weight)
 
     def process(self, frame, print_time=False):
         with torch.no_grad():

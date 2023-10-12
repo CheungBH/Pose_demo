@@ -5,11 +5,12 @@ import cv2
 
 
 class PersonTracker:
-    def __init__(self, sort_type, **kwargs):
+    def __init__(self, sort_type, device="cuda:0", **kwargs):
         if sort_type == "sort":
             self.tracker = BoxTracker()
         elif sort_type == "deepsort":
-            self.tracker = DeepSort(**kwargs)
+            use_cuda = True if device != "cpu" else False
+            self.tracker = DeepSort(use_cuda=use_cuda, **kwargs)
         else:
             raise NotImplementedError("sort type {} not implemented".format(sort_type))
 

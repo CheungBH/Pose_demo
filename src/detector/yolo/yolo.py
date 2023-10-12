@@ -2,12 +2,11 @@ from .models import *  # set ONNX_EXPORT in models.py
 from .utils.datasets import *
 from .utils.utils import *
 
-device = "cuda:0"
-
 
 class YoloDetector:
     def __init__(self, cfg, weight, img_size=416, conf_thresh=0.8
-                 , nms_thresh=0.5):
+                 , nms_thresh=0.5, device="cuda:0"):
+        self.device = device
         self.img_size = img_size
         self.model = Darknet(cfg, img_size)
         if weight.endswith('.pt'):  # pytorch format
@@ -26,7 +25,7 @@ class YoloDetector:
             img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB
             img = np.ascontiguousarray(img, dtype=np.float32)  # uint8 to fp16/fp32
             img /= 255.0  # 0 - 255 to 0.0 - 1.0
-            img = torch.from_numpy(img).to(device)
+            img = torch.from_numpy(img).to(self.device)
             if img.ndimension() == 3:
                 img = img.unsqueeze(0)
             pred, _ = self.model(img)
@@ -36,7 +35,10 @@ class YoloDetector:
                     det[:, :4] = scale_coords(img.shape[2:], det[:, :4], original_shape).round()
             if dets[0] is None:
                 return []
-            return dets[0].cpu()
+            if self.device == "cuda:0":
+                return dets[0].cpu()
+            else:
+                return dets[0]
 
 
 if __name__ == '__main__':

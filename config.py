@@ -1,5 +1,7 @@
 import os, torch
 
+device = "cpu" # "cuda:0" or "cpu"
+
 detector_cfg = "/home/hkuit155/Desktop/PortableTennis/assets/yolo/4cls/cfg.cfg"
 detector_weight = "/home/hkuit155/Desktop/PortableTennis/assets/yolo/4cls/last.pt"
 detector_label = "/home/hkuit155/Desktop/PortableTennis/assets/yolo/4cls/rgb.names"

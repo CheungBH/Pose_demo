@@ -6,7 +6,8 @@ import torch
 
 
 class PersonDetector:
-    def __init__(self, cfg_file, weight):
+    def __init__(self, cfg_file, weight, device="cuda:0"):
+        self.device = device
         if cfg_file.endswith(".yml"):
             logger = Logger(0, use_tensorboard=False)
             self.algo = "nanodet"

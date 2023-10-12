@@ -14,7 +14,7 @@ posenet = PoseModel()
 class PoseEstimator:
     out_h, out_w, in_h, in_w = 64, 64, 256, 256
 
-    def __init__(self, model_path, model_cfg="", data_cfg="", show=True, device="cuda"):
+    def __init__(self, model_path, model_cfg="", data_cfg="", show=True, device="cuda:0"):
         if not model_cfg or not data_cfg:
             model_cfg, data_cfg, _ = get_corresponding_cfg(model_path, check_exist=["data", "model"])
 
@@ -36,6 +36,7 @@ class PoseEstimator:
             else:
                 pass
 
+        posenet.set_device(device)
         posenet.build(model_cfg)
         self.model = posenet.model
         self.kps = posenet.kps

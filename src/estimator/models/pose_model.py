@@ -9,6 +9,9 @@ class PoseModel:
         self.is_freeze = False
         self.device = device
 
+    def set_device(self, device):
+        self.device = device
+
     def build(self, cfg):
         self.cfg = parse_cfg(cfg)
         self.backbone = self.cfg["backbone"]
