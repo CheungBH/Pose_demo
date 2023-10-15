@@ -1,3 +1,4 @@
+asset/
 *.DS_Store
 datasets/
 checkpoints/

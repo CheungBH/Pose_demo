@@ -16,6 +16,11 @@ pose_data_cfg = ""
 sort_type = "sort" # "sort" or "deepsort"
 deepsort_weight = "/home/hkuit155/Desktop/PortableTennis/assets/deepsort/ckpt.t7"
 
+classifiers_type = ["ML"] # "ML", "image" or "sequence"
+classifiers_weight = [""]
+classifiers_config = [""]
+classifiers_label = []
+
 #input_src = TherVideoCap
 output_src = ""
 input_src = "/home/hkuit155/Documents/Highlight2/TOP_100_SHOTS_&_RALLIES_2022_ATP_SEASON_87.mp4"

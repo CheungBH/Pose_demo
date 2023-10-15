@@ -8,20 +8,26 @@ import numpy as np
 from .detector.detector import PersonDetector
 from .estimator.estimator import PoseEstimator
 from .tracker.tracker import PersonTracker
+from .classifier.classifier import EnsembleClassifier
 
 tensor = torch.Tensor
+
+from .tracker.visualize import plot_id_box
 
 
 class HumanDetector:
     def __init__(self, detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg,
-                 sort_type, deepsort_weight, device="cuda:0", debug=True):
+                 sort_type, deepsort_weight, classifiers_type, classifiers_weights, classifiers_config, classifiers_label,
+                 device="cuda:0", debug=True):
         self.debug = debug
         self.device = device
         if debug:
             self.tracker_map = cv2.VideoWriter("traker_map.mp4", cv2.VideoWriter_fourcc(*'mp4v'), 10, (3000, 1200))
+            self.action_map = cv2.VideoWriter("action_map.mp4", cv2.VideoWriter_fourcc(*'mp4v'), 10, (1500, 1200))
         self.detector = PersonDetector(detector_cfg, detector_weight, device)
         self.estimator = PoseEstimator(estimator_weight, estimator_model_cfg, estimator_data_cfg, device=device)
         self.tracker = PersonTracker(sort_type, device=device, model_path=deepsort_weight)
+        self.classifier = EnsembleClassifier(classifiers_type, classifiers_weights, classifiers_config, classifiers_label, device=device)
 
     def process(self, frame, print_time=False):
         with torch.no_grad():
@@ -35,16 +41,6 @@ class HumanDetector:
             if len(dets) > 0:
                 self.dets_cls = dets[:, -1]
                 self.ids, self.boxes = self.tracker.update(dets, copy.deepcopy(frame))
-                if self.debug:
-                    from .tracker.visualize import plot_id_box
-                    import imutils
-                    iou_map = self.tracker.plot_iou_map(np.ones_like(frame))
-                    pred_map = copy.deepcopy(frame)
-                    plot_id_box(self.tracker.get_id2bbox(), pred_map, (0, 255, 0), "up")
-                    plot_id_box(self.tracker.get_pred(), pred_map, (0, 0, 255), "down")
-                    tracking_map = np.concatenate([iou_map, pred_map], axis=1)
-                    self.tracker_map.write(cv2.resize(tracking_map, (3000, 1200)))
-                    cv2.imshow("tracking_map", imutils.resize(tracking_map, width=1000))
 
                 if print_time:
                     print("Tracker uses: {}s".format(round((time.time() - curr_time), 4)))
@@ -55,6 +51,10 @@ class HumanDetector:
                         print("Pose estimator uses: {}s".format(round((time.time() - curr_time), 4)))
                 else:
                     return torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([])
+                self.actions = self.classifier.update(frame, self.boxes, self.kps, self.kps_scores)
+                if self.debug:
+                    self.trigger_debug()
+
             self.convert_result_to_tensor()
             return self.ids, self.boxes, self.dets_cls, self.kps, self.kps_scores
 
@@ -62,6 +62,19 @@ class HumanDetector:
         self.ids = tensor(self.ids)
         self.boxes = tensor(self.boxes)
         self.dets_cls = tensor(self.dets_cls)
+
+    def trigger_debug(self):
+        iou_map = self.tracker.plot_iou_map(np.ones_like(frame))
+        pred_map = copy.deepcopy(frame)
+        plot_id_box(self.tracker.get_id2bbox(), pred_map, (0, 255, 0), "up")
+        plot_id_box(self.tracker.get_pred(), pred_map, (0, 0, 255), "down")
+        tracking_map = np.concatenate([iou_map, pred_map], axis=1)
+        self.tracker_map.write(cv2.resize(tracking_map, (1500, 1200)))
+        cv2.imshow("tracking_map", imutils.resize(tracking_map, width=1000))
+
+        action_map = self.classifier.visualize()
+        self.action_map.write(cv2.resize(action_map, (1500, 1200)))
+        cv2.imshow("action_map", imutils.resize(action_map, width=1000))
 
     def visualize(self, img):
         if self.boxes:

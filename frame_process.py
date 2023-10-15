@@ -13,12 +13,17 @@ write_json = config.write_json
 filter_criterion = config.filter_criterion
 sort_type, deepsort_weight = config.sort_type, config.deepsort_weight
 device = config.device
+classifiers_type = config.classifiers_type
+classifiers_weight = config.classifiers_weight
+classifiers_config = config.classifiers_config
+classifiers_labels = config.classifiers_label
 
 
 class FrameProcessor:
     def __init__(self):
         self.HP = HumanDetector(detector_cfg, detector_weight, estimator_weight, estimator_model_cfg,
-                                estimator_data_cfg, sort_type, deepsort_weight, device=device)
+                                estimator_data_cfg, sort_type, deepsort_weight, classifiers_type, classifiers_weight,
+                                classifiers_config, classifiers_labels, device=device)
         self.write_json = write_json
         if write_json:
             if not config.json_path:
@@ -39,7 +44,6 @@ class FrameProcessor:
 
         if self.write_json:
             self.Json.update(ids, boxes, kps, kps_scores, cnt)
-
 
     def release(self):
         if self.write_json:
