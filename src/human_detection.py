@@ -21,6 +21,7 @@ class HumanDetector:
                  device="cuda:0", debug=True):
         self.debug = debug
         self.device = device
+        self.use_classifier = True if len(classifiers_type) > 0 else False
         if debug:
             self.tracker_map = cv2.VideoWriter("traker_map.mp4", cv2.VideoWriter_fourcc(*'mp4v'), 10, (3000, 1200))
             self.action_map = cv2.VideoWriter("action_map.mp4", cv2.VideoWriter_fourcc(*'mp4v'), 10, (1500, 1200))
@@ -51,7 +52,9 @@ class HumanDetector:
                         print("Pose estimator uses: {}s".format(round((time.time() - curr_time), 4)))
                 else:
                     return torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([])
-                self.actions = self.classifier.update(frame, self.boxes, self.kps, self.kps_scores)
+                if self.use_classifier:
+                    self.actions = self.classifier.update(frame, self.boxes, self.kps, self.kps_scores)
+
                 if self.debug:
                     self.trigger_debug()
 
