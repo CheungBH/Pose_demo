@@ -28,7 +28,8 @@ class HumanDetector:
         self.detector = PersonDetector(detector_cfg, detector_weight, device)
         self.estimator = PoseEstimator(estimator_weight, estimator_model_cfg, estimator_data_cfg, device=device)
         self.tracker = PersonTracker(sort_type, device=device, model_path=deepsort_weight)
-        self.classifier = EnsembleClassifier(classifiers_type, classifiers_weights, classifiers_config, classifiers_label, device=device)
+        self.classifier = EnsembleClassifier(classifiers_type, classifiers_weights, classifiers_config,
+                                             classifiers_label, self.estimator.transform, device=device)
 
     def process(self, frame, print_time=False):
         with torch.no_grad():

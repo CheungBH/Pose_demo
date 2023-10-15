@@ -5,7 +5,7 @@ from .kps_vis import KeyPointVisualizer
 
 
 class ImageClassifier:
-    def __init__(self, weight, config, label, device="cuda:0", max_batch=4, img_type="black_kps"):
+    def __init__(self, weight, config, label, transform, device="cuda:0", max_batch=4, img_type="black_kps"):
         self.label = label
         self.model_size = 224
         self.classes = read_labels(label)
@@ -16,8 +16,8 @@ class ImageClassifier:
         self.max_batch = max_batch
         self.img_type = img_type
         assert img_type in ["black_kps", "origin_crop"]
-        self.sf = [0.1, 0.1, 0.1, 0.1]
-        self.KPV = KeyPointVisualizer(13, "coco")
+        self.sf = [transform.scale_factor/2 for _ in range(4)]
+        self.KPV = KeyPointVisualizer(transform.kps, "coco")
 
     def __call__(self, img, boxes, kps, kps_score):
         img_tns = self.preprocess(img, boxes, kps, kps_score)
