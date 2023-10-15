@@ -7,9 +7,11 @@ import config as config
 detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg = config.detector_cfg, \
                                 config.detector_weight, config.pose_weight, config.pose_model_cfg, config.pose_data_cfg
 
+
 class FrameProcessor:
     def __init__(self):
-        self.HP = HumanDetector(detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg)
+        self.HP = HumanDetector(detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg,
+                                "sort", "", "", "", "", "", debug=False)
 
     def process_video_folder(self, video_folder, output_folder, frame_interval):
         for video_file in os.listdir(video_folder):
@@ -48,6 +50,7 @@ class FrameProcessor:
                 frame_num += 1
             cap.release()
         print("Video frames cropped and saved successfully.")
+
 
 if __name__ == '__main__':
 
