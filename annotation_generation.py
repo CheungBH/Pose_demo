@@ -175,7 +175,7 @@ class FrameProcessor:
 
 if __name__ == '__main__':
     # import config as config
-    input_src = "/home/hkuit164/Desktop/tennis_test"
-    output_src = "/home/hkuit164/Desktop/tennis_test_result"
+    input_src = "/home/hkuit164/Desktop/tennis_test3"
+    output_src = "/home/hkuit164/Desktop/tennis_test3_result"
     demo = Demo(input_src, output_src)
     demo.run()

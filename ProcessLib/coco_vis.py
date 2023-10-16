@@ -6,8 +6,8 @@ import numpy as np
 
 from pycocotools.coco import COCO
 
-json_file = '/home/hkuit155/Downloads/ThermalTemData/testModel/20221216test1025using1208/meragedresult.json'
-dataset_dir = '/home/hkuit155/Downloads/ThermalTemData/testModel/20221216test1025using1208/images/'
+json_file = '/media/hkuit164/Backup/Pose_demo/result.json'
+dataset_dir = '/home/hkuit164/Desktop/tennis_test3/'
 # json_file = '/media/hkuit164/Backup/ThermalProject/HRNet-Human-Pose-Estimation/data/coco/annotations/person_keypoints_val2017.json'
 # dataset_dir = '/media/hkuit164/Backup/ThermalProject/HRNet-Human-Pose-Estimation/data/coco/images/val2017/'
 coco = COCO(json_file)
@@ -19,7 +19,7 @@ Skeletons = np.array([[16,14],[14,12],[17,15],[15,13],[12,13],[6,12],[7,13], [6,
 colorlist = [(255,0,0), (255,0,0), (0,255,0), (0,255,0), (0,0,0), (0,0,0), (0,0,0), (0,0,0), (0,0,255), (0,0,255), (255,255,255), (255,255,255),
              (255,255,0), (255,255,0), (255,255,0), (255,255,0), (255,255,0), (255,255,0), (255,255,0)]
 
-show = False
+show = True
 writer = cv2.VideoWriter("output.mp4",cv2.VideoWriter_fourcc(*'XVID'), 20,(1280,720))
 
 for i in range(len(imgIds)):

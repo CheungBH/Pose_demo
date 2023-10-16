@@ -22,6 +22,3 @@ class JsonGenerator:
 
     def release(self):
         self.file.write(json.dumps(self.result))
-
-
-
