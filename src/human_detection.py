@@ -18,7 +18,7 @@ from .tracker.visualize import plot_id_box
 class HumanDetector:
     def __init__(self, detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg,
                  sort_type, deepsort_weight, classifiers_type, classifiers_weights, classifiers_config, classifiers_label,
-                 device="cuda:0", debug=True):
+                 device="cuda:0", debug=False):
         self.debug = debug
         self.device = device
         self.use_classifier = True if len(classifiers_type) > 0 else False
@@ -33,7 +33,7 @@ class HumanDetector:
 
     def process(self, frame, print_time=False):
         with torch.no_grad():
-            self.ids, self.boxes, self.kps, self.kps_scores = [], [], [], []
+            self.ids, self.boxes, self.dets_cls, self.kps, self.kps_scores = [], [], [], [], []
             if print_time:
                 curr_time = time.time()
             dets = self.detector.detect(frame)
@@ -55,6 +55,9 @@ class HumanDetector:
                     return torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([])
                 if self.use_classifier:
                     self.actions = self.classifier.update(frame, self.boxes, self.kps, self.kps_scores)
+                    for idx, action in enumerate(self.actions[0]):
+                        cv2.putText(frame, action, (idx * 50, 100),
+                                  cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
 
                 if self.debug:
                     self.trigger_debug()

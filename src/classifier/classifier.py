@@ -22,5 +22,6 @@ class EnsembleClassifier:
             action = classifier(img=image, boxes=boxes, kps=kps, kps_exist=kps_exist)
             actions.append(action)
         self.actions = actions
+        return actions
 
 
