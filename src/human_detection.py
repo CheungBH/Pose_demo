@@ -88,6 +88,9 @@ class HumanDetector:
             IDVisualizer().plot_bbox_id(id2box, img, with_bbox=True)
             KeyPointVisualizer(self.estimator.kps, "coco").visualize(img, self.kps, self.kps_scores)
 
+    def init_trackers(self):
+        self.tracker = PersonTracker("sort")
+
 
 if __name__ == '__main__':
     from detector.nanodet.nanodet import NanoDetector
