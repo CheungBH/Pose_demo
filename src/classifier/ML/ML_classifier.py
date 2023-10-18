@@ -19,13 +19,13 @@ class MLClassifier:
             modified_array = []
             for index, num in enumerate(float_numbers):
                 if index % 2 == 0:
-                    modified_array.append(num / img_w)
+                    modified_array.append((num-box[0]) / img_w)
                 else:
-                    modified_array.append(num / img_h)
+                    modified_array.append((num-box[1]) / img_h)
 
             predict_num = self.joblib_model.predict([np.array(modified_array)])
 
-            predict_action = self.lines[int(predict_num)]
+            predict_action = self.lines[int(predict_num)][:-1]
             actions.append(predict_action)
         return actions
 
