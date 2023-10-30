@@ -60,46 +60,46 @@ class AnnotationJsonGenerator:
         self.images.append(image)
 
         # If no bounding boxes, do not save frame
+        # item = {}
         if len(idx) == 0:
             self.save_image = 0
-            return
+            # return
+        else:
+            self.save_image = 1
+            idx, boxes, kps, kps_scores = idx.tolist(), boxes.tolist(), kps.tolist(), kps_scores.tolist()
 
-        self.save_image = 1
-        idx, boxes, kps, kps_scores = idx.tolist(), boxes.tolist(), kps.tolist(), kps_scores.tolist()
-        for i, box, kp, kp_score in zip(idx, boxes, kps, kps_scores):
+            for i, box, kp, kp_score in zip(idx, boxes, kps, kps_scores):
+                item = {}
+                remaining_kps = self.base_kps - len(kp)
+                head_kp = kp[0]
+                for _ in range(remaining_kps):
+                    kp.insert(1, head_kp)
 
-            remaining_kps = self.base_kps - len(kp)
-            head_kp = kp[0]
-            for _ in range(remaining_kps):
-                kp.insert(1, head_kp)
+                bw, bh = box[2] - box[0], box[3] - box[1]
+                item["bbox"] = [box[0], box[1], bw, bh]
 
+                keypoints =[]
+                kp_num = 0
+                for Keypoint in kp:
+                    Keypoint[0] = Keypoint[0]
+                    Keypoint[1] = Keypoint[1]
 
-            item = {}
-            bw, bh = box[2] - box[0], box[3] - box[1]
-            item["bbox"] = [box[0], box[1], bw, bh]
+                    keypoints.extend(Keypoint)
+                    if 0 < kp_num < 5:
+                        keypoints.extend([0])
+                    else:
+                        keypoints.extend([2])
+                    kp_num += 1
+                item["keypoints"] = keypoints
 
-            keypoints =[]
-            kp_num = 0
-            for Keypoint in kp:
-                Keypoint[0] = Keypoint[0]
-                Keypoint[1] = Keypoint[1]
-
-                keypoints.extend(Keypoint)
-                if 0 < kp_num < 5:
-                    keypoints.extend([0])
-                else:
-                    keypoints.extend([2])
-                kp_num += 1
-            item["keypoints"] = keypoints
-
-            item["image_id"] = self.image_count
-            item["id"] = self.anno_count
-            self.anno_count += 1
-            item["area"] = box[2] * box[3]
-            item["category_id"] =  1
-            item["iscrowd"] = 0
-            item["num_keypoints"] = 17
-            self.JsonData["annotations"].append(item)
+                item["id"] = self.anno_count
+                self.anno_count += 1
+                item["area"] = box[2] * box[3]
+                item["category_id"] =  1
+                item["iscrowd"] = 0
+                item["num_keypoints"] = 17
+                item["image_id"] = self.image_count
+                self.JsonData["annotations"].append(item)
 
         self.image_count += 1
 
@@ -140,14 +140,14 @@ class Demo:
             raise ValueError
 
 
-detector_cfg = "/media/hkuit164/Backup/PortableTennis/assets/yolo/s0p003_p88_bs8/cfg.cfg"
-detector_weight = "/media/hkuit164/Backup/PortableTennis/assets/yolo/s0p003_p88_bs8/last.pt"
+detector_cfg = "/media/hkuit164/Backup/2324_data/yolo_rgb/yolov3-1cls.cfg"
+detector_weight = "/media/hkuit164/Backup/2324_data/yolo_rgb/last.pt"
 detector_label = ""
 
 RgbVideoCap = 'rtsp://admin:fyp202020@192.168.8.111:554/Streaming/Channels/101/?transportmode=unicast --input-rtsp-latency=0'
 TherVideoCap = 'rtsp://admin:fyp202020@192.168.8.111:554/Streaming/Channels/201/?transportmode=unicast --input-rtsp-latency=0'
 
-pose_weight = "/media/hkuit164/Backup/PortableTennis/assets/pose/mob3/mob_bs8_0.001/latest.pth"
+pose_weight = "/media/hkuit164/Backup/PoseTrainingPytorch_1/exp/RGB/bs8_R50/latest.pth"
 pose_model_cfg = ""
 pose_data_cfg = ""
 
@@ -156,7 +156,7 @@ sort_type = "sort"
 
 
 class FrameProcessor:
-    def __init__(self, json_path="result.json"):
+    def __init__(self, json_path="/media/hkuit164/Backup/2324_data/0208_high/rgb/result.json"):
         self.HP = HumanDetector(detector_cfg, detector_weight, pose_weight, pose_model_cfg,
                                 pose_data_cfg, "sort", "", "", "", "", "", debug=False)
         self.Json = AnnotationJsonGenerator(json_path)
@@ -174,7 +174,7 @@ class FrameProcessor:
 
 if __name__ == '__main__':
     # import config as config
-    input_src = "/home/hkuit164/Desktop/tennis_test3"
-    output_src = "/home/hkuit164/Desktop/tennis_test3_result"
+    input_src = "/media/hkuit164/Backup/2324_data/0208_high/rgb/images"
+    output_src = "/media/hkuit164/Backup/2324_data/0208_high/rgb/output"
     demo = Demo(input_src, output_src)
     demo.run()
