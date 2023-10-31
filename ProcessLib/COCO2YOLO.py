@@ -9,7 +9,7 @@ import numpy as np
 parser = argparse.ArgumentParser(description='Test yolo data.')
 parser.add_argument('-j', help='JSON file', dest='json', required=True)
 parser.add_argument('-o', help='path to output folder', dest='out',required=True)
-parser.add_argument('-mode', help='0 output train dataset && 1 output validation dataset', required=True, type=bool)
+parser.add_argument('-mode', help='train dataset &validation dataset', required=True, type=str)
 parser.add_argument('-img', help='path to image folder',required=True)
 
 args = parser.parse_args()
@@ -124,12 +124,9 @@ class COCO2YOLO:
         print("saving done")
 
     def _save_txt(self, anno_dict):
-        NTI = math.floor(len(anno_dict.items())*0.8)
-        NVI = math.ceil(len(anno_dict.items())*0.2)
-        shuffleVector = np.arange(len(anno_dict.items()))
-        np.random.shuffle(shuffleVector)
+
         idx = 0
-        for  k, v in anno_dict.items():
+        for k, v in anno_dict.items():
             file_name = ".".join(v[0][0].split(".")[:-1]) + ".txt"
             imag_name = ".".join(file_name.split(".")[:-1]) + ".jpg"
             file_name = os.path.join("txt",file_name)
@@ -143,7 +140,7 @@ class COCO2YOLO:
                 box = ' '.join(box)
                 line = str(category_id) + ' ' + box
                 f.write(line + '\n')
-            if shuffleVector[idx] < NTI:
+            if mode == "train":
                 txtFileName = 'train.txt'
             else:
                 txtFileName = 'val.txt'
