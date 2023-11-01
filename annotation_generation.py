@@ -158,7 +158,7 @@ sort_type = "sort"
 class FrameProcessor:
     def __init__(self, json_path="/media/hkuit164/Backup/2324_data/0208_high/rgb/result.json"):
         self.HP = HumanDetector(detector_cfg, detector_weight, pose_weight, pose_model_cfg,
-                                pose_data_cfg, "sort", "", "", "", "", "", debug=False)
+                                pose_data_cfg, "sort", "", "", "", "", "", debug=False, device="cpu")
         self.Json = AnnotationJsonGenerator(json_path)
         self.visualizer = Visualizer(self.HP.estimator.kps, detector_label)
 

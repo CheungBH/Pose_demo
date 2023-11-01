@@ -15,7 +15,7 @@ class PersonDetector:
             self.detector = NanoDetector(cfg, weight, logger)
         elif cfg_file.endswith(".cfg"):
             self.algo = "yolov3"
-            self.detector = YoloDetector(cfg_file, weight)
+            self.detector = YoloDetector(cfg_file, weight, device=device)
         else:
             raise ValueError("{} is not a cfg file!".format(cfg_file))
 

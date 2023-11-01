@@ -33,7 +33,7 @@ class PoseModel:
         if duc:
             out_dim = self.model.conv_out.out_channels
             self.model.conv_out = torch.nn.Conv2d(self.model.DIM, out_dim, kernel_size=3, stride=1, padding=1)
-        self.model.load_state_dict(torch.load(model_path))
+        self.model.load_state_dict(torch.load(model_path, map_location=self.device))
 
     def freeze(self, percent):
         if percent != 0:
