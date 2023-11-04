@@ -55,9 +55,8 @@ class HumanDetector:
                     return torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([])
                 if self.use_classifier:
                     self.actions = self.classifier.update(frame, self.boxes, self.kps, self.kps_scores)
-                    # for idx, action in enumerate(self.actions[0]):
-                    #     cv2.putText(frame, action, (idx * 50, 100),
-                    #               cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
+                    for idx, action in enumerate(self.actions[0]):
+                        cv2.putText(frame, action, (idx * 50, 100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
                 if self.debug:
                     self.debug_for_tracking(frame)
                     if self.use_classifier:
