@@ -42,6 +42,14 @@ class ModelBuilder:
         outputs_tensor = m_softmax(outputs_tensor).to("cpu")
         return outputs_tensor
 
+    def inference_tensor(self, img_tns):
+        self.image_batch_tensor = img_tns.cuda() if self.device != "cpu" else img_tns
+        outputs = self.CNN.model(self.image_batch_tensor)
+        outputs_tensor = outputs.data
+        m_softmax = nn.Softmax(dim=1)
+        outputs_tensor = m_softmax(outputs_tensor).to("cpu")
+        return outputs_tensor
+
 
 
 

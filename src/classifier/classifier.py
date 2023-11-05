@@ -50,6 +50,6 @@ class EnsembleClassifier:
     def get_longest_label(self):
         max_len = []
         for classifier in self.classifiers:
-            max_len.append(max([len(label) for label in classifier.lines]))
+            max_len.append(max([len(label) for label in classifier.classes]))
         return max(max_len)
 

@@ -17,24 +17,24 @@ class ImageClassifier:
         self.max_batch = max_batch
         self.img_type = img_type
         assert img_type in ["black_kps", "origin_crop"]
-        self.sf = [transform.scale_factor for _ in range(4)]
         self.KPV = KeyPointVisualizer(transform.kps, "coco")
 
-    def __call__(self, img, boxes, kps, kps_score):
-        img_tns = self.preprocess(img, boxes, kps, kps_score)
-        self.scores = self.MB.inference(img_tns)
+    def __call__(self, img, boxes, kps, kps_exist):
+        img_tns = self.preprocess(img, boxes, kps, kps_exist)
+        self.scores = self.MB.inference_tensor(img_tns)
         _, self.pred_idx = torch.max(self.scores, 1)
-        self.pred_cls = self.classes[self.pred_idx]
+        self.pred_cls = [self.classes[i] for i in self.pred_idx]
         return self.pred_cls
 
     def preprocess(self, img, boxes, kps, kps_score):
         img = img if self.img_type == "origin_crop" else self.KPV.visualize(img, kps, kps_score)
-        imgs_tensor = []
+        imgs_tensor = None
         for box in boxes:
-            scaled_box = self.transform.scale(img, box, self.sf)
-            cropped_img = self.transform.sample.crop(scaled_box, img)
+            scaled_box = self.transform.scale(img, box)
+            cropped_img = self.transform.SAMPLE.crop(scaled_box, img)
             img_tensor = image_normalize(cropped_img, size=self.model_size)
-            imgs_tensor.append(img_tensor)
+            imgs_tensor = torch.unsqueeze(img_tensor, dim=0) if imgs_tensor is None else torch.cat(
+                (imgs_tensor, torch.unsqueeze(img_tensor, dim=0)), dim=0)
         return imgs_tensor
 
 
