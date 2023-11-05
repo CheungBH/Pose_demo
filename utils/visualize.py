@@ -16,8 +16,9 @@ class Visualizer:
     def visualize(self, image, ids, boxes, boxes_cls, kps, kps_scores):
         vis_img = np.full(image.shape, 0, dtype=np.uint8) if self.bg_type == "black" else image.copy()
         if len(ids) > 0:
-            self.BBV.visualize(boxes, vis_img, boxes_cls)
-            self.IDV.plot_bbox_id(self.get_id2bbox(ids, boxes), vis_img)
+            if self.bg_type == "raw":
+                self.BBV.visualize(boxes, vis_img, boxes_cls)
+                self.IDV.plot_bbox_id(self.get_id2bbox(ids, boxes), vis_img)
             self.KPV.visualize(vis_img, kps, kps_scores)
         return vis_img
 
