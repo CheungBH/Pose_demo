@@ -4,18 +4,23 @@ from config.config import kps_conf
 
 
 class Visualizer:
-    def __init__(self, kps_num, det_label="", kps_thresh=kps_conf):
+    def __init__(self, kps_num, bg_type="raw", det_label="", kps_thresh=kps_conf):
         self.IDV = IDVisualizer()
         self.KPV = KeyPointVisualizer(kps_num, "coco", thresh=kps_thresh)
         self.det_cls = [""] if not det_label else [name.strip() for name in open(det_label).readlines()]
         self.BBV = BBoxVisualizer(self.det_cls)
         self.BallV = BallVisualizer()
+        self.bg_type = bg_type
+        assert bg_type in ["raw", "black"], "Unsupported background type: {}".format(bg_type)
 
     def visualize(self, image, ids, boxes, boxes_cls, kps, kps_scores):
+        vis_img = np.full(image.shape, 0, dtype=np.uint8) if self.bg_type == "black" else image.copy()
         if len(ids) > 0:
-            self.BBV.visualize(boxes, image, boxes_cls)
-            self.IDV.plot_bbox_id(self.get_id2bbox(ids, boxes), image)
-            self.KPV.visualize(image, kps, kps_scores)
+            self.BBV.visualize(boxes, vis_img, boxes_cls)
+            self.IDV.plot_bbox_id(self.get_id2bbox(ids, boxes), vis_img)
+            self.KPV.visualize(vis_img, kps, kps_scores)
+        return vis_img
+
 
     def get_labels(self):
         return self.BBV.labels

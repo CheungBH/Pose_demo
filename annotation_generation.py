@@ -129,7 +129,7 @@ class Demo:
         if self.demo_type == "image_folder":
             for idx, img_name in enumerate(self.input_imgs):
                 frame = cv2.imread(img_name)
-                self.FP.process(frame, img_name)
+                frame = self.FP.process(frame, img_name)
                 if self.show:
                     cv2.imshow("result", cv2.resize(frame, self.show_size))
                     cv2.waitKey(1)
@@ -143,9 +143,6 @@ class Demo:
 detector_cfg = "/media/hkuit164/Backup/2324_data/yolo_rgb/yolov3-1cls.cfg"
 detector_weight = "/media/hkuit164/Backup/2324_data/yolo_rgb/last.pt"
 detector_label = ""
-
-RgbVideoCap = 'rtsp://admin:fyp202020@192.168.8.111:554/Streaming/Channels/101/?transportmode=unicast --input-rtsp-latency=0'
-TherVideoCap = 'rtsp://admin:fyp202020@192.168.8.111:554/Streaming/Channels/201/?transportmode=unicast --input-rtsp-latency=0'
 
 pose_weight = "/media/hkuit164/Backup/PoseTrainingPytorch_1/exp/RGB/bs8_R50/latest.pth"
 pose_model_cfg = ""
