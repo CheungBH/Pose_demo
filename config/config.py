@@ -28,7 +28,7 @@ input_src = "demo_assets/cut_xjl_fall.mp4"
 out_size = (1280, 720)
 show_size = (1280, 720)
 show = True
-vis_bg_type = "black"# "raw" or "black"
+vis_bg_type = "raw" # "raw" or "black"
 
 write_json = True
 json_path = "result.json"
