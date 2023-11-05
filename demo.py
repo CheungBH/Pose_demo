@@ -1,5 +1,5 @@
 from frame_process import FrameProcessor
-import config as config
+from config import config as config
 import os
 import cv2
 import time
@@ -108,7 +108,7 @@ class Demo:
 
 
 if __name__ == '__main__':
-    import config as config
+    import config.config as config
     input_src = config.input_src
     output_src = config.output_src
     demo = Demo(input_src, output_src)

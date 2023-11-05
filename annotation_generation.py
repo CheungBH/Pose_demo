@@ -1,5 +1,5 @@
 # from frame_process import FrameProcessor
-import config as config
+from config import config as config
 import os
 import cv2
 from src.human_detection import HumanDetector

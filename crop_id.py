@@ -2,7 +2,7 @@ import argparse
 from src.human_detection import HumanDetector
 import cv2
 import os
-import config as config
+from config import config as config
 
 detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg = config.detector_cfg, \
                                 config.detector_weight, config.pose_weight, config.pose_model_cfg, config.pose_data_cfg

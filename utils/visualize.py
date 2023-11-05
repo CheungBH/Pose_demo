@@ -1,6 +1,6 @@
 from .utils import scale, crop
 import numpy as np
-from config import kps_conf
+from config.config import kps_conf
 
 
 class Visualizer:

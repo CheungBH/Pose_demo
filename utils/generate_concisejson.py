@@ -1,5 +1,6 @@
 import json
-import config as config
+from config import config as config
+
 
 class ConciseJsonGenerator:
     def __init__(self, json_name):
