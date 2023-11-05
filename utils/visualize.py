@@ -21,7 +21,6 @@ class Visualizer:
             self.KPV.visualize(vis_img, kps, kps_scores)
         return vis_img
 
-
     def get_labels(self):
         return self.BBV.labels
 

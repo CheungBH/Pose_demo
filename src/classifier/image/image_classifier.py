@@ -24,7 +24,8 @@ class ImageClassifier:
             load_dict = json.load(load_f)
         self.backbone = load_dict["backbone"]
         self.img_type = load_dict["image_type"]
-        assert self.img_type in ["black_kps", "raw_crop"]
+        assert self.img_type in ["black_crop", "raw_crop", 'black_whole', 'raw_whole'], \
+            "Unsupported image type: {}".format(self.img_type)
 
     def __call__(self, img, boxes, kps, kps_exist):
         img_tns = self.preprocess(img, boxes, kps, kps_exist)

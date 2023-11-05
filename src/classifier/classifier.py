@@ -35,8 +35,12 @@ class EnsembleClassifier:
                     cv2.line(img, (85, 0), (85, img.shape[0]), (0, 0, 255), 2)
                     cv2.putText(img, str(i), (8 * self.max_label_len * (w_idx+1) + 4 * self.max_label_len, 30),
                                 cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
+                action_color = (0, 255, 0)
+                if isinstance(self.classifiers[h_idx], ImageClassifier):
+                    if "whole" in self.classifiers[h_idx].img_type:
+                        action_color = (255, 0, 0)
                 cv2.putText(img, action, (8 * self.max_label_len * (w_idx+1), 30 + h_interval * (h_idx+1)),
-                            cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
+                            cv2.FONT_HERSHEY_PLAIN, 2, action_color, 2)
         return img
 
     def update(self, image, boxes, kps, kps_exist):

@@ -16,14 +16,23 @@ pose_data_cfg = ""
 sort_type = "sort" # "sort" or "deepsort"
 deepsort_weight = "/home/hkuit155/Desktop/PortableTennis/assets/deepsort/ckpt.t7"
 
-classifiers_type = ["ML", "ML", "image"] # "ML", "image" or "sequence"
-classifiers_weight = ["demo_assets/ml/SVM_model.joblib", "demo_assets/ml/AdaBoost_model.joblib", "demo_assets/image_cls/demo1/best_acc.pth"]
-classifiers_config = ["", "", "config/image_cls_config/shufflenet_rawcrop.json"]
-classifiers_label = ["demo_assets/ml/label", "demo_assets/ml/label", "demo_assets/image_cls/demo1/labels.txt"]
+classifiers_type = ["ML", "ML", "image", "image"] # "ML", "image" or "sequence"
+classifiers_weight = ["demo_assets/ml/SVM_model.joblib",
+                      "demo_assets/ml/AdaBoost_model.joblib",
+                      "demo_assets/image_cls/demo1/best_acc.pth",
+                      "demo_assets/image_cls/demo1/best_acc.pth"]
+classifiers_config = ["",
+                      "",
+                      "config/image_cls_config/shufflenet_rawcrop.json",
+                      "config/image_cls_config/shufflenet_rawWhole.json"]
+classifiers_label = ["demo_assets/ml/label",
+                     "demo_assets/ml/label",
+                     "demo_assets/image_cls/demo1/labels.txt",
+                     "demo_assets/image_cls/demo1/labels.txt"]
 
 #input_src = TherVideoCap
 output_src = "output.mp4"
-input_src = "demo_assets/cut_xjl_fall.mp4"
+input_src = "demo_assets/cut_xjl_wheelchair.mp4"
 #output_src = "/media/hkuit164/Backup/free_1_thermal (online-video-cutter.com)_detectionresult.mp4"
 out_size = (1280, 720)
 show_size = (1280, 720)
