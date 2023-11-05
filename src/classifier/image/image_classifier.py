@@ -34,14 +34,24 @@ class ImageClassifier:
         return self.pred_cls
 
     def preprocess(self, img, boxes, kps, kps_score):
-        img = img if self.img_type == "origin_crop" else self.KPV.visualize(img, kps, kps_score)
-        imgs_tensor = None
-        for box in boxes:
-            scaled_box = self.transform.scale(img, box)
-            cropped_img = self.transform.SAMPLE.crop(scaled_box, img)
-            img_tensor = image_normalize(cropped_img, size=self.model_size)
-            imgs_tensor = torch.unsqueeze(img_tensor, dim=0) if imgs_tensor is None else torch.cat(
-                (imgs_tensor, torch.unsqueeze(img_tensor, dim=0)), dim=0)
+        if "crop" in self.img_type:
+            img = img if self.img_type == "raw_crop" else self.KPV.visualize(img, kps, kps_score)
+            imgs_tensor = None
+            for box in boxes:
+                scaled_box = self.transform.scale(img, box)
+                cropped_img = self.transform.SAMPLE.crop(scaled_box, img)
+                img_tensor = image_normalize(cropped_img, size=self.model_size)
+                imgs_tensor = torch.unsqueeze(img_tensor, dim=0) if imgs_tensor is None else torch.cat(
+                    (imgs_tensor, torch.unsqueeze(img_tensor, dim=0)), dim=0)
+        elif "whole" in self.img_type:
+            if "raw" in self.img_type:
+                target_img = img
+            else:
+                target_img = self.KPV.visualize(img, kps, kps_score)
+            img_tensor = image_normalize(target_img, size=self.model_size)
+            imgs_tensor = torch.unsqueeze(img_tensor, dim=0)
+        else:
+            raise ValueError("Unknown image type: {}".format(self.img_type))
         return imgs_tensor
 
 
