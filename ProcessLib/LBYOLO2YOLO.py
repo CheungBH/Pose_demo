@@ -19,10 +19,10 @@ def copy_files_to_new_folder(source_folder, destination_folder):
             shutil.copy2(source_path, destination_path)
 
 
-def yolo_format_change(input_folder, class_num, split):
+def yolo_format_change(input_folder, class_num, data_folder, split):
 
     with open(os.path.join(input_folder, 'rgb.data'), 'w') as rgbdata:
-        rgbdata.write(f"classes={class_num}\ntrain=./data/yolo/train.txt\nvalid=./data/yolo/val.txt\nnames=./data/yolo/rgb.names")
+        rgbdata.write(f"classes={class_num}\ntrain=./data/{data_folder}/train.txt\nvalid=./data/{data_folder}/val.txt\nnames=./data/{data_folder}/rgb.names")
 
     os.rename(os.path.join(input_folder, "images"), os.path.join(input_folder, "JPEGImages"))
     os.rename(os.path.join(input_folder, "labels"), os.path.join(input_folder, "txt"))
@@ -40,23 +40,24 @@ def yolo_format_change(input_folder, class_num, split):
 
         with open(os.path.join(input_folder, 'train.txt'), 'w') as train:
             for train_image in train_images:
-                train.write(f"data/yolo/JPEGImages/{train_image}\n")
+                train.write(f"data/{data_folder}/JPEGImages/{train_image}\n")
 
         with open(os.path.join(input_folder, 'val.txt'), 'w') as val:
             for val_image in val_images:
-                val.write(f"data/yolo/JPEGImages/{val_image}\n")
+                val.write(f"data/{data_folder}/JPEGImages/{val_image}\n")
 
     else:
         with open(os.path.join(input_folder, 'train.txt'), 'w') as train:
             for image in images:
-                train.write(f"data/yolo/JPEGImages/{image}\n")
+                train.write(f"data/{data_folder}/JPEGImages/{image}\n")
         # to be continued
 
 
 label_studio_yolo = '/media/hkuit164/Backup/xjl/label_studio_yolo/test'
-output_yolo = '/media/hkuit164/Backup/xjl/label_studio_yolo/test_r'
+output_yolo = '/media/hkuit164/Backup/xjl/label_studio_yolo/test_format'
 cls_num = 4
+data_name = "yolo"
 data_split = True
 
 copy_files_to_new_folder(label_studio_yolo, output_yolo)
-yolo_format_change(output_yolo, cls_num, data_split)
+yolo_format_change(output_yolo, cls_num, data_name, data_split)
