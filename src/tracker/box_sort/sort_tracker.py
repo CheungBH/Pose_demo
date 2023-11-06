@@ -1,5 +1,5 @@
 from src.tracker.box_sort.sort import Sort
-from config import max_age, min_hints, iou_thresh
+from config.config import max_age, min_hints, iou_thresh
 import cv2
 
 

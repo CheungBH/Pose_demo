@@ -18,7 +18,7 @@ from .tracker.visualize import plot_id_box
 class HumanDetector:
     def __init__(self, detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg,
                  sort_type, deepsort_weight, classifiers_type, classifiers_weights, classifiers_config, classifiers_label,
-                 device="cuda:0", debug=False):
+                 device="cuda:0", debug=True):
         self.debug = debug
         self.device = device
         self.use_classifier = True if len(classifiers_type) > 0 else False
@@ -56,11 +56,13 @@ class HumanDetector:
                 if self.use_classifier:
                     self.actions = self.classifier.update(frame, self.boxes, self.kps, self.kps_scores)
                     for idx, action in enumerate(self.actions[0]):
-                        cv2.putText(frame, action, (idx * 50, 100),
-                                  cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
-
+                        cv2.putText(frame, action, (idx * 50, 100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
                 if self.debug:
-                    self.trigger_debug()
+                    self.debug_for_tracking(frame)
+                    if self.use_classifier:
+                        cls_status_img = self.classifier.visualize(self.actions, self.ids, frame)
+                        cv2.imshow("action_map", imutils.resize(cls_status_img, width=1000))
+                        self.action_map.write(cv2.resize(cls_status_img, (1500, 1200)))
 
             self.convert_result_to_tensor()
             return self.ids, self.boxes, self.dets_cls, self.kps, self.kps_scores
@@ -70,7 +72,7 @@ class HumanDetector:
         self.boxes = tensor(self.boxes)
         self.dets_cls = tensor(self.dets_cls)
 
-    def trigger_debug(self):
+    def debug_for_tracking(self, frame):
         iou_map = self.tracker.plot_iou_map(np.ones_like(frame))
         pred_map = copy.deepcopy(frame)
         plot_id_box(self.tracker.get_id2bbox(), pred_map, (0, 255, 0), "up")
@@ -79,9 +81,6 @@ class HumanDetector:
         self.tracker_map.write(cv2.resize(tracking_map, (1500, 1200)))
         cv2.imshow("tracking_map", imutils.resize(tracking_map, width=1000))
 
-        action_map = self.classifier.visualize()
-        self.action_map.write(cv2.resize(action_map, (1500, 1200)))
-        cv2.imshow("action_map", imutils.resize(action_map, width=1000))
 
     def visualize(self, img):
         if self.boxes:

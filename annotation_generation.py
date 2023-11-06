@@ -1,5 +1,5 @@
 # from frame_process import FrameProcessor
-import config as config
+from config import config as config
 import os
 import cv2
 from src.human_detection import HumanDetector
@@ -129,7 +129,7 @@ class Demo:
         if self.demo_type == "image_folder":
             for idx, img_name in enumerate(self.input_imgs):
                 frame = cv2.imread(img_name)
-                self.FP.process(frame, img_name)
+                frame = self.FP.process(frame, img_name)
                 if self.show:
                     cv2.imshow("result", cv2.resize(frame, self.show_size))
                     cv2.waitKey(1)
@@ -144,9 +144,6 @@ detector_cfg = "/media/hkuit164/Backup/2324_data/yolo_rgb/yolov3-1cls.cfg"
 detector_weight = "/media/hkuit164/Backup/2324_data/yolo_rgb/last.pt"
 detector_label = ""
 
-RgbVideoCap = 'rtsp://admin:fyp202020@192.168.8.111:554/Streaming/Channels/101/?transportmode=unicast --input-rtsp-latency=0'
-TherVideoCap = 'rtsp://admin:fyp202020@192.168.8.111:554/Streaming/Channels/201/?transportmode=unicast --input-rtsp-latency=0'
-
 pose_weight = "/media/hkuit164/Backup/PoseTrainingPytorch_1/exp/RGB/bs8_R50/latest.pth"
 pose_model_cfg = ""
 pose_data_cfg = ""
@@ -158,7 +155,7 @@ sort_type = "sort"
 class FrameProcessor:
     def __init__(self, json_path="/media/hkuit164/Backup/2324_data/0208_high/rgb/result.json"):
         self.HP = HumanDetector(detector_cfg, detector_weight, pose_weight, pose_model_cfg,
-                                pose_data_cfg, "sort", "", "", "", "", "", debug=False)
+                                pose_data_cfg, "sort", "", "", "", "", "", debug=False, device="cpu")
         self.Json = AnnotationJsonGenerator(json_path)
         self.visualizer = Visualizer(self.HP.estimator.kps, detector_label)
 

@@ -29,7 +29,6 @@ weights
 SPPE
 log
 video
-config/config.py
 src/debug/model
 src/debug/video
 src/debug/tmp
@@ -42,3 +41,4 @@ video_process_with_txt_jump.py
 *.onnx
 *.mp4
 result.json
+demo_assets

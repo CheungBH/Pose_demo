@@ -7,7 +7,8 @@ class MLClassifier:
         self.joblib_model = joblib.load(weight)
         self.label = label
         with open(self.label, 'r') as file:
-            self.lines = file.readlines()
+            self.classes = file.readlines()
+
     def __call__(self, img, boxes, kps, kps_exist):
         actions = []
 
@@ -25,7 +26,7 @@ class MLClassifier:
 
             predict_num = self.joblib_model.predict([np.array(modified_array)])
 
-            predict_action = self.lines[int(predict_num)][:-1]
+            predict_action = self.classes[int(predict_num)][:-1]
             actions.append(predict_action)
         return actions
 

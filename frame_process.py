@@ -1,6 +1,6 @@
 from src.human_detection import HumanDetector
 import cv2
-import config as config
+from config import config as config
 from utils.generate_json import JsonGenerator
 from utils.filter_result import ResultFilterer
 from utils.visualize import Visualizer
@@ -17,6 +17,7 @@ classifiers_type = config.classifiers_type
 classifiers_weight = config.classifiers_weight
 classifiers_config = config.classifiers_config
 classifiers_labels = config.classifiers_label
+bg_type = config.vis_bg_type
 
 
 class FrameProcessor:
@@ -35,15 +36,16 @@ class FrameProcessor:
                 json_path = ""
             self.Json = JsonGenerator(json_path)
         self.filter = ResultFilterer(filter_criterion)
-        self.visualizer = Visualizer(self.HP.estimator.kps, detector_label)
+        self.visualizer = Visualizer(self.HP.estimator.kps, det_label=detector_label, bg_type=bg_type)
 
     def process(self, frame, cnt=0):
         ids, boxes, boxes_cls, kps, kps_scores = self.HP.process(frame, print_time=True)
         ids, boxes, boxes_cls, kps, kps_scores = self.filter.filter(ids, boxes, boxes_cls, kps, kps_scores, cnt)
-        self.visualizer.visualize(frame, ids, boxes, boxes_cls, kps, kps_scores)
+        vis_img = self.visualizer.visualize(frame, ids, boxes, boxes_cls, kps, kps_scores)
 
         if self.write_json:
             self.Json.update(ids, boxes, kps, kps_scores, cnt)
+        return vis_img
 
     def release(self):
         if self.write_json:

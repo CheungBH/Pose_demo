@@ -98,3 +98,4 @@ class KeyPointVisualizer:
                     start_xy = part_line[start_p]
                     end_xy = part_line[end_p]
                     cv2.line(black_img, start_xy, end_xy, self.line_color[i], 8)
+        return black_img
