@@ -9,7 +9,6 @@ class ImageClassifier:
     def __init__(self, weight, config, label, transform, device="cuda:0", max_batch=4):
         self.transform = transform
         self.label = label
-        self.model_size = 224
         self.parse_config(config)
         self.classes = read_labels(label)
         self.MB = ModelBuilder()
@@ -23,6 +22,7 @@ class ImageClassifier:
         with open(config_file, "r") as load_f:
             load_dict = json.load(load_f)
         self.backbone = load_dict["backbone"]
+        self.model_size = load_dict["image_size"]
         self.img_type = load_dict["image_type"]
         assert self.img_type in ["black_crop", "raw_crop", 'black_whole', 'raw_whole'], \
             "Unsupported image type: {}".format(self.img_type)

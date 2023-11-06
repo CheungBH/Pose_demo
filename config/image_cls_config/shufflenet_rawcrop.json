@@ -1,1 +1,1 @@
-{"backbone": "shufflenet", "image_type": "raw_crop"}
+{"backbone": "shufflenet", "image_type": "raw_crop", "image_size":  224}

@@ -1,1 +1,1 @@
-{"backbone": "mobilenet", "image_type": "black_crop"}
+{"backbone": "mobilenet", "image_type": "black_crop", "image_size":  224}
