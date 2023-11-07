@@ -18,6 +18,7 @@ classifiers_weight = config.classifiers_weight
 classifiers_config = config.classifiers_config
 classifiers_labels = config.classifiers_label
 bg_type = config.vis_bg_type
+kps_color_type = config.kps_color_type
 
 
 class FrameProcessor:
@@ -36,7 +37,8 @@ class FrameProcessor:
                 json_path = ""
             self.Json = JsonGenerator(json_path)
         self.filter = ResultFilterer(filter_criterion)
-        self.visualizer = Visualizer(self.HP.estimator.kps, det_label=detector_label, bg_type=bg_type)
+        self.visualizer = Visualizer(self.HP.estimator.kps, det_label=detector_label, bg_type=bg_type,
+                                     kps_color_type=kps_color_type)
 
     def process(self, frame, cnt=0):
         ids, boxes, boxes_cls, kps, kps_scores = self.HP.process(frame, print_time=True)

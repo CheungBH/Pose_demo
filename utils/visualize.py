@@ -4,14 +4,20 @@ from config.config import kps_conf
 
 
 class Visualizer:
-    def __init__(self, kps_num, bg_type="raw", det_label="", kps_thresh=kps_conf):
+    def __init__(self, kps_num, bg_type="raw", det_label="", kps_thresh=kps_conf, kps_color_type="COCO"):
         self.IDV = IDVisualizer()
-        self.KPV = KeyPointVisualizer(kps_num, "coco", thresh=kps_thresh)
+        if kps_color_type == "COCO":
+            self.KPV = KeyPointVisualizer(kps_num, "coco", thresh=kps_thresh)
+        elif kps_color_type == "per_id":
+            self.KPV = KeyPointVisualizerID(kps_num, thresh=kps_thresh)
+        else:
+            raise NotImplementedError("Unsupported keypoint color type: {}".format(kps_color_type))
         self.det_cls = [""] if not det_label else [name.strip() for name in open(det_label).readlines()]
         self.BBV = BBoxVisualizer(self.det_cls)
         self.BallV = BallVisualizer()
         self.bg_type = bg_type
         assert bg_type in ["raw", "black"], "Unsupported background type: {}".format(bg_type)
+        self.kps_color_type = kps_color_type
 
     def visualize(self, image, ids, boxes, boxes_cls, kps, kps_scores):
         vis_img = np.full(image.shape, 0, dtype=np.uint8) if self.bg_type == "black" else image.copy()
@@ -19,7 +25,10 @@ class Visualizer:
             if self.bg_type == "raw":
                 self.BBV.visualize(boxes, vis_img, boxes_cls)
                 self.IDV.plot_bbox_id(self.get_id2bbox(ids, boxes), vis_img)
-            self.KPV.visualize(vis_img, kps, kps_scores)
+            if self.kps_color_type == "COCO":
+                self.KPV.visualize(vis_img, kps, kps_scores)
+            else:
+                self.KPV.visualize(vis_img, ids, kps, kps_scores)
         return vis_img
 
     def get_labels(self):
@@ -94,6 +103,9 @@ CYAN = (255, 255, 0)
 YELLOW = (0, 255, 255)
 ORANGE = (0, 165, 255)
 PURPLE = (255, 0, 255)
+WHITE = (255, 255, 255)
+PINK = (180, 105, 255)
+
 
 coco_p_color = [(0, 255, 255), (0, 191, 255), (0, 255, 102), (0, 77, 255), (0, 255, 0),
                 # Nose, LEye, REye, LEar, REar
@@ -199,4 +211,63 @@ class KeyPointVisualizer:
                     start_xy = part_line[start_p]
                     end_xy = part_line[end_p]
                     cv2.line(frame, start_xy, end_xy, self.line_color[i], 8)
+
+
+class KeyPointVisualizerID:
+    def __init__(self, kps, thresh=0.1):
+        assert kps == 13 or kps == 17, "Only support 13 or 17 keypoints"
+        self.kps = kps
+        self.thresh = self.process_thresh(thresh)
+        self.colors = [RED, YELLOW, BLUE, GREEN, CYAN, PURPLE, ORANGE, WHITE, PINK]
+        self.l_pair = [
+            (0, 1), (0, 2), (1, 3), (2, 4),  # Head
+            (5, 6), (5, 7), (7, 9), (6, 8), (8, 10),
+            (17, 11), (17, 12),  # Body
+            (11, 13), (12, 14), (13, 15), (14, 16)
+        ]
+
+    def process_thresh(self, thresh):
+        if isinstance(thresh, float):
+            thresh = [thresh for _ in range(self.kps)]
+            thresh = torch.Tensor(thresh)
+        return thresh
+
+    def visualize(self, frame, ids, kps, kps_confs=[]):
+        kps = torch.Tensor(kps)
+        if len(kps_confs) <= 0:
+            kps_confs = torch.Tensor([[[1 for _ in range(kps.shape[0])] for j in range(kps.shape[1])]])
+        else:
+            kps_confs = torch.Tensor(kps_confs)
+
+        for idx, (i, kp) in enumerate(zip(ids, kps)):
+            color_idx = int(i.tolist())-1 if i < len(self.colors) else -1
+            part_line = {}
+            kp_preds = kps[idx]
+            kp_confs = kps_confs[idx]
+
+            kp_thresh = self.thresh
+            if self.kps == 17:
+                kp_preds = torch.cat((kp_preds, torch.unsqueeze((kp_preds[5, :] + kp_preds[6, :]) / 2, 0)))
+                kp_confs = torch.cat((kp_confs, torch.unsqueeze((kp_confs[5, :] + kp_confs[6, :]) / 2, 0)))
+                kp_thresh = torch.cat((self.thresh, torch.unsqueeze((self.thresh[5] + self.thresh[6]) / 2, 0)))
+            elif self.kps == 13:
+                kp_preds = torch.cat((kp_preds, torch.unsqueeze((kp_preds[1, :] + kp_preds[2, :]) / 2, 0)))
+                kp_confs = torch.cat((kp_confs, torch.unsqueeze((kp_confs[1, :] + kp_confs[2, :]) / 2, 0)))
+                kp_thresh = torch.cat((self.thresh, torch.unsqueeze((self.thresh[1] + self.thresh[2]) / 2, 0)))
+            # Draw keypoints
+            for n in range(kp_preds.shape[0]):
+                cor_x, cor_y = int(kp_preds[n, 0]), int(kp_preds[n, 1])
+                cor_conf = kp_confs[n, 0]
+
+                if cor_x == 0 or cor_y == 0 or cor_conf < kp_thresh[n]:
+                    continue
+
+                part_line[n] = (cor_x, cor_y)
+                cv2.circle(frame, (cor_x, cor_y), 4, self.colors[color_idx], -1)
+            # Draw limbs
+            for i, (start_p, end_p) in enumerate(self.l_pair):
+                if start_p in part_line and end_p in part_line:
+                    start_xy = part_line[start_p]
+                    end_xy = part_line[end_p]
+                    cv2.line(frame, start_xy, end_xy, self.colors[color_idx], 8)
 

@@ -32,12 +32,13 @@ classifiers_label = ["demo_assets/ml/label",
 
 #input_src = TherVideoCap
 output_src = "output.mp4"
-input_src = "demo_assets/cut_xjl_wheelchair.mp4"
+input_src = "demo_assets/cut_xjl_wheelchair.mov"
 #output_src = "/media/hkuit164/Backup/free_1_thermal (online-video-cutter.com)_detectionresult.mp4"
 out_size = (1280, 720)
 show_size = (1280, 720)
 show = True
 vis_bg_type = "raw" # "raw" or "black"
+kps_color_type = "COCO" # "per_id" or "COCO"
 
 write_json = True
 json_path = "result.json"
