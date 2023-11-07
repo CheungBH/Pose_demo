@@ -59,7 +59,7 @@ while True:
                 # 保存在新的list中
                 new_tracks.append(tr)
 
-                cv.circle(vis, (int(x), int(y)), 2, (0, 255, 0), -1)
+                cv.circle(vis, (int(x), int(y)), 2, (255, 0, 0), 1.5)
 
             # 更新特征点
             tracks = new_tracks

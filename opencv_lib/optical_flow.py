@@ -11,7 +11,8 @@ lk_params = dict(winSize=(15, 15), maxLevel=2, criteria=(cv.TERM_CRITERIA_EPS | 
 
 
 # 随机颜色
-color = np.random.randint(0,255,(100,3))
+# color = np.random.randint(0,255,(100,3))
+color = [(0, 0, 255), (0, 255, 0), (255, 0, 0)]
 
 # 读取第一帧
 ret, old_frame = cap.read()
@@ -56,8 +57,9 @@ while True:
     for i, (new, old) in enumerate(zip(good_new,good_old)):
         a,b = new.ravel()
         c,d = old.ravel()
-        mask = cv.line(mask, (int(a),int(b)),(int(c),int(d)), color[i].tolist(), 2)
-        frame = cv.circle(frame,(int(a),int(b)),5,color[i].tolist(),-1)
+        mask = cv.line(mask, (int(a),int(b)),(int(c),int(d)), color[0], 2)
+        frame = cv.circle(frame,(int(a),int(b)),5,color[1], 2)
+        # frame = cv.circle(frame,(int(c),int(d)),5,color[2], 1)
     cv.imshow('frame',cv.add(frame,mask))
     k = cv.waitKey(30) & 0xff
     if k == 27:
