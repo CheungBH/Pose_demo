@@ -2,7 +2,7 @@ import numpy as np
 import cv2 as cv
 import os
 
-cap = cv.VideoCapture('../asset/video/smh_wheelchair_rgb.mp4')
+cap = cv.VideoCapture('../asset/video/reverse_1_thermal.mp4')
 
 #角点检测参数
 feature_params = dict(maxCorners=100, qualityLevel=0.1, minDistance=7, blockSize=7)
@@ -59,13 +59,13 @@ while True:
                 # 保存在新的list中
                 new_tracks.append(tr)
 
-                cv.circle(vis, (int(x), int(y)), 2, (255, 0, 0), 1.5)
+                cv.circle(vis, (int(x), int(y)), 3, (255, 0, 0), 1, 1)
 
             # 更新特征点
             tracks = new_tracks
 
             # #以上一振角点为初始点，当前帧跟踪到的点为终点,画出运动轨迹
-            cv.polylines(vis, [np.int32(tr) for tr in tracks], False, (0, 255, 0), 1)
+            cv.polylines(vis, [np.int32(tr) for tr in tracks], False, (0, 255, 0), 2)
 
 
         # 每隔 detect_interval 时间检测一次特征点

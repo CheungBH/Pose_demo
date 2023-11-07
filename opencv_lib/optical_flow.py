@@ -1,7 +1,7 @@
 import numpy as np
 import cv2 as cv
 import os
-cap = cv.VideoCapture('../asset/video/smh_wheelchair_rgb.mp4')
+cap = cv.VideoCapture('../asset/video/reverse_1_thermal.mp4')
 
 #角点检测参数
 feature_params = dict(maxCorners=100, qualityLevel=0.1, minDistance=7, blockSize=7)
@@ -12,7 +12,7 @@ lk_params = dict(winSize=(15, 15), maxLevel=2, criteria=(cv.TERM_CRITERIA_EPS | 
 
 # 随机颜色
 # color = np.random.randint(0,255,(100,3))
-color = [(0, 0, 255), (0, 255, 0), (255, 0, 0)]
+color = [(255, 0, 0), (0, 255, 0)]
 
 # 读取第一帧
 ret, old_frame = cap.read()
