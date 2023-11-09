@@ -97,6 +97,7 @@ class Demo:
             for idx, img_name in enumerate(self.input_imgs):
                 frame = cv2.imread(img_name)
                 frame = self.FP.process(frame, cnt=idx)
+                self.FP.HP.init_trackers()
                 if self.show:
                     cv2.imshow("result", cv2.resize(frame, self.show_size))
                     cv2.waitKey(1000)
