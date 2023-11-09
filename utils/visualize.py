@@ -218,7 +218,7 @@ class KeyPointVisualizerID:
         assert kps == 13 or kps == 17, "Only support 13 or 17 keypoints"
         self.kps = kps
         self.thresh = self.process_thresh(thresh)
-        self.colors = [RED, YELLOW, BLUE, GREEN, CYAN, PURPLE, ORANGE, WHITE, PINK]
+        self.colors = [GREEN, YELLOW, BLUE, RED, CYAN, PURPLE, ORANGE, WHITE, PINK]
         self.l_pair = [
             (0, 1), (0, 2), (1, 3), (2, 4),  # Head
             (5, 6), (5, 7), (7, 9), (6, 8), (8, 10),
