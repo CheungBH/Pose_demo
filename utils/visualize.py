@@ -1,6 +1,8 @@
 from .utils import scale, crop
 import numpy as np
 from config.config import kps_conf
+from .id_color import COLORS
+from PIL import ImageColor
 
 
 class Visualizer:
@@ -218,7 +220,7 @@ class KeyPointVisualizerID:
         assert kps == 13 or kps == 17, "Only support 13 or 17 keypoints"
         self.kps = kps
         self.thresh = self.process_thresh(thresh)
-        self.colors = [GREEN, YELLOW, BLUE, RED, CYAN, PURPLE, ORANGE, WHITE, PINK]
+        self.colors = COLORS
         self.l_pair = [
             (0, 1), (0, 2), (1, 3), (2, 4),  # Head
             (5, 6), (5, 7), (7, 9), (6, 8), (8, 10),
@@ -261,13 +263,14 @@ class KeyPointVisualizerID:
 
                 if cor_x == 0 or cor_y == 0 or cor_conf < kp_thresh[n]:
                     continue
-
+                # ImageColor.getcolor(self.colors[color_idx][idx], "RGB")
                 part_line[n] = (cor_x, cor_y)
-                cv2.circle(frame, (cor_x, cor_y), 4, self.colors[color_idx], -1)
+                cv2.circle(frame, (cor_x, cor_y), 4,
+                           ImageColor.getcolor(self.colors[color_idx][idx], "RGB"), 50)
             # Draw limbs
             for i, (start_p, end_p) in enumerate(self.l_pair):
                 if start_p in part_line and end_p in part_line:
                     start_xy = part_line[start_p]
                     end_xy = part_line[end_p]
-                    cv2.line(frame, start_xy, end_xy, self.colors[color_idx], 8)
+                    cv2.line(frame, start_xy, end_xy, ImageColor.getcolor(self.colors[color_idx][0], "RGB"), 5)
 
