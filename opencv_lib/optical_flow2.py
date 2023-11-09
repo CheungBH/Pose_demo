@@ -2,7 +2,7 @@ import numpy as np
 import cv2 as cv
 import os
 
-cap = cv.VideoCapture('../asset/video/reverse_1_thermal.mp4')
+cap = cv.VideoCapture('../output.mp4')
 
 #角点检测参数
 feature_params = dict(maxCorners=100, qualityLevel=0.1, minDistance=7, blockSize=7)
@@ -87,7 +87,7 @@ while True:
 
         cv.imshow('track', vis)
         #out.write(vis)
-        ch = cv.waitKey(1)
+        ch = cv.waitKey(0)
         if ch ==27:
             cv.imwrite('track.jpg', vis)
             break

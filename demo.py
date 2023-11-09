@@ -83,7 +83,7 @@ class Demo:
                     if self.output:
                         self.out.release()
                     break
-                idx += 1
+                # idx += 1
         elif self.demo_type == "image":
             frame = self.input_img
             frame = self.FP.process(frame)
