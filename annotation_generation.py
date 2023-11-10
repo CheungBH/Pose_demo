@@ -140,11 +140,11 @@ class Demo:
             raise ValueError
 
 
-detector_cfg = "/media/hkuit164/Backup/2324_data/yolo_rgb/yolov3-1cls.cfg"
-detector_weight = "/media/hkuit164/Backup/2324_data/yolo_rgb/last.pt"
+detector_cfg = "/media/hkuit164/Backup/2324_data/checkpoint/yolo_rgb/yolov3-1cls.cfg"
+detector_weight = "/media/hkuit164/Backup/2324_data/checkpoint/yolo_rgb/last.pt"
 detector_label = ""
 
-pose_weight = "/media/hkuit164/Backup/PoseTrainingPytorch_1/exp/RGB/bs8_R50/latest.pth"
+pose_weight = "/media/hkuit164/Backup/2324_data/checkpoint/pose_rgb/latest.pth"
 pose_model_cfg = ""
 pose_data_cfg = ""
 
@@ -153,17 +153,18 @@ sort_type = "sort"
 
 
 class FrameProcessor:
-    def __init__(self, json_path="/media/hkuit164/Backup/2324_data/0208_high/rgb/result.json"):
+    def __init__(self, json_path="/media/hkuit164/Backup/xjl/hh_video_data/cut_video_selected/cor_total_selected_pretrain.json"):
         self.HP = HumanDetector(detector_cfg, detector_weight, pose_weight, pose_model_cfg,
                                 pose_data_cfg, "sort", "", "", "", "", "", debug=False, device="cpu")
         self.Json = AnnotationJsonGenerator(json_path)
-        self.visualizer = Visualizer(self.HP.estimator.kps, detector_label)
+        self.visualizer = Visualizer(self.HP.estimator.kps, det_label=detector_label)
 
     def process(self, frame, name):
         ids, boxes, boxes_cls, kps, kps_scores = self.HP.process(frame, print_time=True)
-        self.visualizer.visualize(frame, ids, boxes, boxes_cls, kps, kps_scores)
+        frame = self.visualizer.visualize(frame, ids, boxes, boxes_cls, kps, kps_scores)
         self.HP.init_trackers()
         self.Json.update(ids, boxes, kps, kps_scores, name.split("/")[-1], frame.shape[0], frame.shape[1])
+        return frame
 
     def release(self):
         self.Json.release()
@@ -171,7 +172,7 @@ class FrameProcessor:
 
 if __name__ == '__main__':
     # import config as config
-    input_src = "/media/hkuit164/Backup/2324_data/0208_high/rgb/images"
-    output_src = "/media/hkuit164/Backup/2324_data/0208_high/rgb/output"
+    input_src = "/media/hkuit164/Backup/xjl/hh_video_data/cut_video_selected/cor_total_selected"
+    output_src = "/media/hkuit164/Backup/xjl/hh_video_data/cut_video_selected/cor_total_selected_pretrain_output"
     demo = Demo(input_src, output_src)
     demo.run()
