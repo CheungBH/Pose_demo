@@ -51,10 +51,11 @@ class HumanDetector:
                     self.kps, self.kps_scores = self.estimator.estimate(frame, self.boxes)
                     if print_time:
                         print("Pose estimator uses: {}s".format(round((time.time() - curr_time), 4)))
-                else:
-                    return torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([])
+                # else:
+                #     return torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([]), torch.tensor([])
                 if self.use_classifier:
                     self.actions = self.classifier.update(frame, self.boxes, self.kps, self.kps_scores)
+                    print(self.actions)
                     for idx, action in enumerate(self.actions[0]):
                         cv2.putText(frame, action, (idx * 50, 100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
                 if self.debug:
@@ -63,6 +64,18 @@ class HumanDetector:
                         cls_status_img = self.classifier.visualize(self.actions, self.ids, frame)
                         cv2.imshow("action_map", imutils.resize(cls_status_img, width=1000))
                         self.action_map.write(cv2.resize(cls_status_img, (1500, 1200)))
+            else:
+                if self.use_classifier:
+                    self.actions = self.classifier.update(frame, self.boxes, self.kps, self.kps_scores)
+                    print(self.actions)
+                    # for idx, action in enumerate(self.actions[0]):
+                    #     cv2.putText(frame, action, (idx * 50, 100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
+                # if self.debug:
+                #     self.debug_for_tracking(frame)
+                #     if self.use_classifier:
+                #         cls_status_img = self.classifier.visualize(self.actions, self.ids, frame)
+                #         cv2.imshow("action_map", imutils.resize(cls_status_img, width=1000))
+                #         self.action_map.write(cv2.resize(cls_status_img, (1500, 1200)))
 
             self.convert_result_to_tensor()
             return self.ids, self.boxes, self.dets_cls, self.kps, self.kps_scores
