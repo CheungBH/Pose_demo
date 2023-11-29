@@ -104,7 +104,7 @@ def yolov7_format_change(input_folder, split, data_folder):
         classes = text.split()
         class_num = len(classes)
 
-    with open(os.path.join(input_folder, 'coco.yaml'), 'w') as coco:
+    with open(os.path.join(input_folder, 'data.yaml'), 'w') as coco:
         coco.write(f"\ntrain: ./datasets/{data_folder}/train.txt\nval: ./datasets/{data_folder}/val.txt\nnc: {class_num}\nnames: {classes}")
 
     os.remove(os.path.join(input_folder, "classes.txt"))
