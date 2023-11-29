@@ -19,7 +19,11 @@ def copy_files_to_new_folder(source_folder, destination_folder):
             shutil.copy2(source_path, destination_path)
 
 
-def yolo_format_change(input_folder, class_num, data_folder, split):
+def yolo_format_change(input_folder, data_folder, split):
+    with open(os.path.join(input_folder, "classes.txt"), 'r') as cls:
+        text = cls.read()
+        classes = text.split()
+        class_num = len(classes)
 
     with open(os.path.join(input_folder, 'rgb.data'), 'w') as rgbdata:
         rgbdata.write(f"classes={class_num}\ntrain=./data/{data_folder}/train.txt\nvalid=./data/{data_folder}/val.txt\nnames=./data/{data_folder}/rgb.names")
@@ -53,11 +57,67 @@ def yolo_format_change(input_folder, class_num, data_folder, split):
         # to be continued
 
 
-label_studio_yolo = '/media/hkuit164/Backup/xjl/label_studio_yolo/test'
-output_yolo = '/media/hkuit164/Backup/xjl/label_studio_yolo/test_format'
-cls_num = 4
-data_name = "yolo"
+def yolov7_format_change(input_folder, split, data_folder):
+    os.remove(os.path.join(input_folder, "notes.json"))
+
+    images = [f for f in os.listdir(os.path.join(input_folder, "images"))
+              if f.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".bmp"))]
+    if split is True:
+        random.shuffle(images)
+        train_size = int(0.8 * len(images))
+        train_images = images[:train_size]
+        val_images = images[train_size:]
+
+        with open(os.path.join(input_folder, 'train.txt'), 'w') as train:
+            for train_image in train_images:
+                train.write(f"datasets/{data_folder}/images/train/{train_image}\n")
+
+        with open(os.path.join(input_folder, 'val.txt'), 'w') as val:
+            for val_image in val_images:
+                val.write(f"datasets/{data_folder}/images/val/{val_image}\n")
+
+        train_img_folder = os.path.join(input_folder, "images", "train")
+        val_img_folder = os.path.join(input_folder, "images", "val")
+
+        os.makedirs(train_img_folder)
+        os.makedirs(val_img_folder)
+
+        for train_image in train_images:
+            shutil.move(os.path.join(input_folder, "images", train_image), train_img_folder)
+        for val_image in val_images:
+            shutil.move(os.path.join(input_folder, "images", val_image), val_img_folder)
+
+        train_label_folder = os.path.join(input_folder, "labels", "train")
+        val_label_folder = os.path.join(input_folder, "labels", "val")
+        os.makedirs(train_label_folder)
+        os.makedirs(val_label_folder)
+
+        for train_image in train_images:
+            train_label = os.path.splitext(train_image)[0] + ".txt"
+            shutil.move(os.path.join(input_folder, "labels", train_label), train_label_folder)
+        for val_image in val_images:
+            val_label = os.path.splitext(val_image)[0] + ".txt"
+            shutil.move(os.path.join(input_folder, "labels", val_label), val_label_folder)
+
+    with open(os.path.join(input_folder, "classes.txt"), 'r') as cls:
+        text = cls.read()
+        classes = text.split()
+        class_num = len(classes)
+
+    with open(os.path.join(input_folder, 'coco.yaml'), 'w') as coco:
+        coco.write(f"\ntrain: ./datasets/{data_folder}/train.txt\nval: ./datasets/{data_folder}/val.txt\nnc: {class_num}\nnames: {classes}")
+
+    os.remove(os.path.join(input_folder, "classes.txt"))
+
+
+label_studio_yolo = '/media/hkuit164/Backup/xjl/hh_video_data/cut_video_selected/label_studio/cor/yolo/project-43-at-2023-11-15-02-23-5e2ecdf3'
+output_yolo = '/media/hkuit164/Backup/xjl/hh_video_data/cut_video_selected/label_studio/cor/yolo/yolov7_4cls_cor'
+data_name = "yolov7_4cls_cor"
 data_split = True
+yolov7 = True
 
 copy_files_to_new_folder(label_studio_yolo, output_yolo)
-yolo_format_change(output_yolo, cls_num, data_name, data_split)
+if yolov7 is False:
+    yolo_format_change(output_yolo, data_name, data_split)
+else:
+    yolov7_format_change(output_yolo, data_split, data_name)
