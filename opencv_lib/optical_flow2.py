@@ -1,8 +1,16 @@
 import numpy as np
 import cv2 as cv
 import os
+import argparse
 
-cap = cv.VideoCapture('../output.mp4')
+parser = argparse.ArgumentParser()
+parser.add_argument('--source', type=str, help='raw video path')
+parser.add_argument('--output', type=str, help='output video path')
+parser.add_argument('--view', type=bool, default=False, help='show the video')
+opt = parser.parse_args()
+
+cap = cv.VideoCapture(opt.source)
+output_path = opt.output
 
 #角点检测参数
 feature_params = dict(maxCorners=100, qualityLevel=0.1, minDistance=7, blockSize=7)
@@ -16,6 +24,8 @@ fps = cap.get(cv.CAP_PROP_FPS)
 #out = cv.VideoWriter("reslut.avi", cv.VideoWriter_fourcc('D', 'I', 'V', 'X'), fps,
                      #(np.int(width), np.int(height)), True)
 
+out = cv.VideoWriter(output_path, cv.VideoWriter_fourcc(*'mp4v'), fps, (np.int(width), np.int(height)), True)
+
 tracks = []
 track_len = 15
 frame_idx = 0
@@ -25,6 +35,7 @@ while True:
     ret, frame = cap.read()
     if ret:
         frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        vis_black = np.zeros_like(frame)
         vis = frame.copy()
 
         if len(tracks)>0:
@@ -59,13 +70,13 @@ while True:
                 # 保存在新的list中
                 new_tracks.append(tr)
 
-                cv.circle(vis, (int(x), int(y)), 3, (255, 0, 0), 1, 1)
+                cv.circle(vis_black, (int(x), int(y)), 3, (255, 0, 0), 3, 1)
 
             # 更新特征点
             tracks = new_tracks
 
             # #以上一振角点为初始点，当前帧跟踪到的点为终点,画出运动轨迹
-            cv.polylines(vis, [np.int32(tr) for tr in tracks], False, (0, 255, 0), 2)
+            cv.polylines(vis_black, [np.int32(tr) for tr in tracks], False, (0, 255, 0), 3)
 
 
         # 每隔 detect_interval 时间检测一次特征点
@@ -84,10 +95,12 @@ while True:
 
         frame_idx += 1
         prev_gray = frame_gray
-
-        cv.imshow('track', vis)
+        if opt.view is True:
+            cv.imshow('track', frame)
+            cv.imshow("raw", vis_black)
+        out.write(vis_black)
         #out.write(vis)
-        ch = cv.waitKey(0)
+        ch = cv.waitKey(1)
         if ch ==27:
             cv.imwrite('track.jpg', vis)
             break
