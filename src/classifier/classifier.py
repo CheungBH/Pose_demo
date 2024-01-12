@@ -7,7 +7,8 @@ import cv2
 class EnsembleClassifier:
     def __init__(self, types, weights, configs, labels, kps_transform, device="cuda:0"):
         self.classifiers = []
-        assert len(types) == len(weights) == len(configs) == len(labels), "Length of classifiers must be equal"
+        if len(types) > 0:
+            assert len(types) == len(weights) == len(configs) == len(labels), "Length of classifiers must be equal"
         for t, w, c, l in zip(types, weights, configs, labels):
             if t == "ML":
                 self.classifiers.append(MLClassifier(weight=w, config=c, label=l))
@@ -15,7 +16,8 @@ class EnsembleClassifier:
                 self.classifiers.append(ImageClassifier(weight=w, config=c, label=l, transform=kps_transform, device=device))
             else:
                 raise NotImplementedError("Not support this type of classifier")
-        self.max_label_len = self.get_longest_label()
+        if len(types) > 0:
+            self.max_label_len = self.get_longest_label()
 
     def visualize(self, actions, ids, frame, h_interval=40):
         img = np.zeros_like(frame, dtype=np.uint8)
