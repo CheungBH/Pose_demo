@@ -14,7 +14,7 @@ class Visualizer:
             self.KPV = KeyPointVisualizerID(kps_num, thresh=kps_thresh)
         else:
             raise NotImplementedError("Unsupported keypoint color type: {}".format(kps_color_type))
-        self.det_cls = [""] if not det_label else [name.strip() for name in open(det_label).readlines()]
+        self.det_cls = "" if not det_label else [name.strip() for name in open(det_label).readlines()]
         self.BBV = BBoxVisualizer(self.det_cls)
         self.BallV = BallVisualizer()
         self.bg_type = bg_type
@@ -62,8 +62,9 @@ class BBoxVisualizer:
         for idx, bbox in enumerate(bboxes):
             img = cv2.rectangle(img, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), self.box_color, 4)
             if len(self.cls_names) > 0 and len(boxes_cls) > 0:
-                curr_label = self.cls_names[int(boxes_cls[idx])]
-                self.labels.append(curr_label)
+                if self.cls_names:
+                    curr_label = self.cls_names[int(boxes_cls[idx])]
+                    self.labels.append(curr_label)
                 img = cv2.putText(img, curr_label, (int(bbox[0]), int(bbox[1])),
                                   cv2.FONT_HERSHEY_PLAIN, 2, self.label_color, 2)
 
