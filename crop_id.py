@@ -11,7 +11,7 @@ detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_
 class FrameProcessor:
     def __init__(self):
         self.HP = HumanDetector(detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg,
-                                "sort", "", "", "", "", "", debug=False)
+                                "sort", "", "cuda:0",  debug=False)
 
     def process_video_folder(self, video_folder, output_folder, frame_interval):
         for video_file in os.listdir(video_folder):
@@ -20,16 +20,18 @@ class FrameProcessor:
                 continue
 
             cap = cv2.VideoCapture(video_path)
-            video_output_folder = os.path.join(output_folder, os.path.splitext(video_file)[0])
+            video_name = os.path.splitext(video_file)[0]
+            video_output_folder = os.path.join(output_folder, video_name)
             os.makedirs(video_output_folder, exist_ok=True)
             frame_num = 0
+
             while True:
                 ret, frame = cap.read()
                 if not ret:
                     break
 
                 if frame_num % frame_interval == 0:
-                    ids, boxes, kps, kps_scores = self.HP.process(frame, print_time=True)
+                    ids, boxes, det_cls, kps, kps_scores = self.HP.process(frame, print_time=True)
                     for i in range(len(ids)):
                         person_id = ids[i]
                         bbox = boxes[i]
@@ -39,9 +41,9 @@ class FrameProcessor:
                         x_max = int(bbox[2])
                         y_max = int(bbox[3])
 
-                        person_folder = os.path.join(video_output_folder, f"person_{person_id}")
+                        person_folder = os.path.join(video_output_folder, f"person_{int(person_id)}")
                         os.makedirs(person_folder, exist_ok=True)
-                        output_filename = f"frame_{frame_num}_person_{person_id}.jpg"
+                        output_filename = f"{video_name}_frame_{frame_num}_person_{int(person_id)}.jpg"
                         output_path = os.path.join(person_folder, output_filename)
 
                         cropped_img = frame[y_min:y_max, x_min:x_max]
