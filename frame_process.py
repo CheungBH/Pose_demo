@@ -1,4 +1,5 @@
 from src.human_detection import HumanDetector
+from src.human_detection_multi import HumanDetector as HumanDetector_yolopose
 import cv2
 from config import config as config
 from utils.generate_json import JsonGenerator
@@ -6,6 +7,7 @@ from utils.filter_result import ResultFilterer
 from utils.visualize import Visualizer
 
 
+yolo_pose = config.yolo_pose
 detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg = config.detector_cfg, \
                                 config.detector_weight, config.pose_weight, config.pose_model_cfg, config.pose_data_cfg
 detector_label = config.detector_label
@@ -23,9 +25,11 @@ kps_color_type = config.kps_color_type
 
 class FrameProcessor:
     def __init__(self):
-        self.HP = HumanDetector(detector_cfg, detector_weight, estimator_weight, estimator_model_cfg,
-                                estimator_data_cfg, sort_type, deepsort_weight, classifiers_type, classifiers_weight,
-                                classifiers_config, classifiers_labels, device=device)
+        human = HumanDetector if yolo_pose else HumanDetector_yolopose
+        self.HP = human(detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg,
+                        sort_type, deepsort_weight, classifiers_type, classifiers_weight, classifiers_config,
+                        classifiers_labels, device=device)
+
         self.write_json = write_json
         if write_json:
             if not config.json_path:
@@ -41,7 +45,9 @@ class FrameProcessor:
                                      kps_color_type=kps_color_type)
 
     def process(self, frame, cnt=0):
-        ids, boxes, boxes_cls, kps, kps_scores = self.HP.process(frame, print_time=True)
+        if yolo_pose:
+            ids, boxes, boxes_cls, kps, kps_scores = self.HP.process(frame, print_time=True)
+
         ids, boxes, boxes_cls, kps, kps_scores = self.filter.filter(ids, boxes, boxes_cls, kps, kps_scores, cnt)
         vis_img = self.visualizer.visualize(frame, ids, boxes, boxes_cls, kps, kps_scores)
 
