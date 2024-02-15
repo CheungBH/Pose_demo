@@ -1,6 +1,7 @@
 import json
 import numpy as np
 import torch
+from models import *
 
 
 class Pose3dLifter:
@@ -17,7 +18,7 @@ class Pose3dLifter:
             self.pose3d_model = WrapSTGCN(p_dropout=args.dropout).to(device)
 
         elif args.posenet_name == 'mlp':
-            self.pose3d_model = LinearModel(num_joints * 2, (num_joints - 1) * 3, num_stage=args.stages, p_dropout=args.dropout,
+            self.pose3d_model = LinearModel(num_kps * 2, (num_kps - 1) * 3, num_stage=args.stages, p_dropout=args.dropout,
                                     linear_size=args.linear_size)
 
         elif args.posenet_name == 'videopose':
