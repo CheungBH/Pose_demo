@@ -21,6 +21,7 @@ classifiers_config = config.classifiers_config
 classifiers_labels = config.classifiers_label
 bg_type = config.vis_bg_type
 kps_color_type = config.kps_color_type
+pose3d_config, pose3d_weight = config.pose3d_config, config.pose3d_weight
 
 
 class FrameProcessor:
@@ -28,7 +29,7 @@ class FrameProcessor:
         human = HumanDetector if yolo_pose else HumanDetector_yolopose
         self.HP = human(detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg,
                         sort_type, deepsort_weight, classifiers_type, classifiers_weight, classifiers_config,
-                        classifiers_labels, device=device)
+                        classifiers_labels, pose3d_config, pose3d_weight, device=device)
 
         self.write_json = write_json
         if write_json:

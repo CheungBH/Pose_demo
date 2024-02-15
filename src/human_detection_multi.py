@@ -8,7 +8,7 @@ import numpy as np
 from .yolo_pose.detect import YoloPose
 from .tracker.tracker import PersonTracker
 from .classifier.classifier import EnsembleClassifier
-
+from .pose3d.pose3d_lifter import Pose3dLifter
 tensor = torch.Tensor
 
 from .tracker.visualize import plot_id_box
@@ -17,7 +17,7 @@ from .tracker.visualize import plot_id_box
 class HumanDetector:
     def __init__(self, detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg,
                  sort_type, deepsort_weight, classifiers_type, classifiers_weights, classifiers_config, classifiers_label,
-                 device="cuda:0", debug=True):
+                 pose3d_cfg, pose3d_weight, device="cuda:0", debug=True):
         self.debug = debug
         self.device = device
         self.use_classifier = True if len(classifiers_type) > 0 else False
@@ -30,6 +30,8 @@ class HumanDetector:
         self.tracker = PersonTracker(sort_type, device=device, model_path=deepsort_weight)
         self.classifier = EnsembleClassifier(classifiers_type, classifiers_weights, classifiers_config,
                                              classifiers_label, self.estimator.transform, device=device)
+        if pose3d_cfg and pose3d_weight:
+            self.pose3d = Pose3dLifter(pose3d_cfg, pose3d_weight, device=device, num_kps=self.estimator.kps)
 
     def process(self, frame, print_time=False):
         with torch.no_grad():
@@ -37,6 +39,14 @@ class HumanDetector:
             if print_time:
                 curr_time = time.time()
             self.boxes, self.kps, self.kps_scores = self.pose_det.process(frame)
+            if hasattr(self, "pose3d"):
+                self.kps_3d = self.pose3d.process(self.kps)
+                if print_time:
+                    print("Pose3d uses: {}s".format(round((time.time() - curr_time), 4)))
+                if self.debug:
+                    pose3d_img = self.pose3d.visualize(self.kps_3d, frame)
+                    if self.debug:
+                        cv2.imshow("pose3d", pose3d_img)
             if print_time:
                 print("Detector uses: {}s".format(round((time.time() - curr_time), 4)))
                 curr_time = time.time()

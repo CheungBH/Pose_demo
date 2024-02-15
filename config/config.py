@@ -35,6 +35,9 @@ classifiers_label = ["demo_assets/ml/label",
                      "demo_assets/image_cls/demo1/labels.txt"]
 
 
+pose3d_config = ""
+pose3d_weight = ""
+
 output_src = "output.mp4"
 input_src = "asset/video/video_input3.mp4"
 #output_src = "/media/hkuit164/Backup/free_1_thermal (online-video-cutter.com)_detectionresult.mp4"
