@@ -6,6 +6,7 @@ from models import *
 
 class Pose3dLifter:
     def __init__(self, cfg_file, weight, device="cpu", img_size=(224, 224), num_kps=17):
+        self.device = device
         self.num_kps = num_kps
         self.height, self.width = img_size
         with open(cfg_file, 'r') as f:

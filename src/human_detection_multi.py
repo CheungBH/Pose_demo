@@ -31,7 +31,7 @@ class HumanDetector:
         self.classifier = EnsembleClassifier(classifiers_type, classifiers_weights, classifiers_config,
                                              classifiers_label, self.estimator.transform, device=device)
         if pose3d_cfg and pose3d_weight:
-            self.pose3d = Pose3dLifter(pose3d_cfg, pose3d_weight, device=device, num_kps=self.estimator.kps)
+            self.pose3d = Pose3dLifter(pose3d_cfg, pose3d_weight, device=device, num_kps=self.pose_det.kps)
 
     def process(self, frame, print_time=False):
         with torch.no_grad():
