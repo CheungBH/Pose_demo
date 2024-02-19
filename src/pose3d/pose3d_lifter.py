@@ -33,11 +33,18 @@ class Pose3dLifter:
 
         torch.load(weight, map_location=device)
 
-    def process(self, kps):
-        norm_kps = self.normalize_screen_coordinates(kps[..., :2], w=self.width, h=self.height)
+    def process(self, kps, size=None):
+        if size is not None:
+            self.height, self.width = size
+        norm_kps = self.normalize_screen_coordinates(kps[..., :2].numpy(), w=self.width, h=self.height)
+        norm_kps = torch.tensor(norm_kps)
         outputs_3d = self.pose3d_model(norm_kps.view(self.num_kps, -1)).view(self.num_kps, -1, 3).cpu()
         outputs_3d = outputs_3d[:, :, :] - outputs_3d[:, :1, :]  # the output is relative to the 0 joint
         return outputs_3d
+
+    def process_kps(self, kps):
+        if self.num_kps == 17:
+
 
     def normalize_screen_coordinates(self, X, w, h):
         assert X.shape[-1] == 2

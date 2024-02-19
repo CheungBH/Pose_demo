@@ -55,7 +55,8 @@ class HumanDetector:
                     if print_time:
                         print("Pose estimator uses: {}s".format(round((time.time() - curr_time), 4)))
                     if hasattr(self, "pose3d"):
-                        self.kps_3d = self.pose3d.process(self.kps)
+                        pose3d_imgsize = (frame.shape[1], frame.shape[0])
+                        self.kps_3d = self.pose3d.process(self.kps, pose3d_imgsize)
                         if print_time:
                             print("Pose3d uses: {}s".format(round((time.time() - curr_time), 4)))
                         pose3d_img = self.pose3d.visualize(self.kps_3d, frame)
