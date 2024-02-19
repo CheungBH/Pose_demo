@@ -19,7 +19,7 @@ class Pose3dLifter:
             self.pose3d_model = WrapSTGCN(p_dropout=args.dropout).to(device)
 
         elif args["arch"] == 'mlp':
-            self.pose3d_model = LinearModel(num_kps * 2, (num_kps - 1) * 3, num_stage=int(args['stages']),
+            self.pose3d_model = LinearModel(16 * 2, (16 - 1) * 3, num_stage=int(args['stages']),
                                             linear_size=int(args['linear_size']))
 
         elif args["arch"] == 'videopose':
@@ -31,20 +31,24 @@ class Pose3dLifter:
         else:
             assert False, 'posenet_name invalid'
 
-        torch.load(weight, map_location=device)
+        self.pose3d_model.load_state_dict(torch.load(weight, map_location=device)["state_dict"])
+        self.pose3d_model.eval()
 
     def process(self, kps, size=None):
         if size is not None:
             self.height, self.width = size
         norm_kps = self.normalize_screen_coordinates(kps[..., :2].numpy(), w=self.width, h=self.height)
-        norm_kps = torch.tensor(norm_kps)
-        outputs_3d = self.pose3d_model(norm_kps.view(self.num_kps, -1)).view(self.num_kps, -1, 3).cpu()
+        norm_kps = torch.tensor(norm_kps.astype(np.float32)).to(self.device)
+        norm_kps = self.process_kps2d(norm_kps)
+        outputs_3d = self.pose3d_model(norm_kps).cpu()
         outputs_3d = outputs_3d[:, :, :] - outputs_3d[:, :1, :]  # the output is relative to the 0 joint
         return outputs_3d
 
-    def process_kps(self, kps):
+    def process_kps2d(self, kps):
         if self.num_kps == 17:
-
+            return kps[:, 1:, ]
+        else:
+            raise ValueError
 
     def normalize_screen_coordinates(self, X, w, h):
         assert X.shape[-1] == 2

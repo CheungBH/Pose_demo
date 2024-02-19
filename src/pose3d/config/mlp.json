@@ -1,1 +1,1 @@
-{"arch": "mlp", "stages": "1", "linear_size": 1024}
+{"arch": "mlp", "stages": 2, "linear_size": 1024}
