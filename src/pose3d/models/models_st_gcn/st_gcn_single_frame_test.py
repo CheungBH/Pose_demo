@@ -10,10 +10,10 @@ with different loss, training parameter, learning rate.
 Here we only use it as a baseline model, which we follow the same training strategy with other three model for convenience.
 '''
 
-from .models_baseline.models_st_gcn.st_gcn_utils.tgcn import st_gcn_ConvTemporalGraphical
-from .models_baseline.models_st_gcn.st_gcn_utils.graph_frames import st_gcn_Graph
-from .models_baseline.models_st_gcn.st_gcn_utils.graph_frames_withpool_2 import st_gcn_Graph_pool
-from .models_baseline.models_st_gcn.st_gcn_utils.st_gcn_non_local_embedded_gaussian import st_gcn_NONLocalBlock2D
+from ..models_st_gcn.st_gcn_utils.tgcn import st_gcn_ConvTemporalGraphical
+from ..models_st_gcn.st_gcn_utils.graph_frames import st_gcn_Graph
+from ..models_st_gcn.st_gcn_utils.graph_frames_withpool_2 import st_gcn_Graph_pool
+from ..models_st_gcn.st_gcn_utils.st_gcn_non_local_embedded_gaussian import st_gcn_NONLocalBlock2D
 
 inter_channels = [128, 128, 256]
 

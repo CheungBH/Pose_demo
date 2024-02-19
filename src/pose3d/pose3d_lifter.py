@@ -1,10 +1,8 @@
 import json
 import numpy as np
 import torch
-try:
-    from .models import *
-except:
-    pass
+from .models import *
+
 
 class Pose3dLifter:
     def __init__(self, cfg_file, weight, device="cpu", img_size=(224, 224), num_kps=17):
