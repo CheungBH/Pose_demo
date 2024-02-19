@@ -46,9 +46,7 @@ class FrameProcessor:
                                      kps_color_type=kps_color_type)
 
     def process(self, frame, cnt=0):
-        if yolo_pose:
-            ids, boxes, boxes_cls, kps, kps_scores = self.HP.process(frame, print_time=True)
-
+        ids, boxes, boxes_cls, kps, kps_scores = self.HP.process(frame, print_time=True)
         ids, boxes, boxes_cls, kps, kps_scores = self.filter.filter(ids, boxes, boxes_cls, kps, kps_scores, cnt)
         vis_img = self.visualizer.visualize(frame, ids, boxes, boxes_cls, kps, kps_scores)
 

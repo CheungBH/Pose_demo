@@ -11,18 +11,18 @@ class Pose3dLifter:
         self.height, self.width = img_size
         with open(cfg_file, 'r') as f:
             args = json.load(f)
-        if args.arch == 'gcn':
+        if args["arch"] == 'gcn':
             adj = adj_mx_from_skeleton(dataset.skeleton())
             self.pose3d_model = SemGCN(adj, 128, num_layers=args.stages, p_dropout=args.dropout, nodes_group=None).to(device)
 
-        elif args.args.arch == 'stgcn':
+        elif args["arch"] == 'stgcn':
             self.pose3d_model = WrapSTGCN(p_dropout=args.dropout).to(device)
 
-        elif args.args.arch == 'mlp':
-            self.pose3d_model = LinearModel(num_kps * 2, (num_kps - 1) * 3, num_stage=args.stages,
-                                            linear_size=args.linear_size)
+        elif args["arch"] == 'mlp':
+            self.pose3d_model = LinearModel(num_kps * 2, (num_kps - 1) * 3, num_stage=int(args['stages']),
+                                            linear_size=int(args['linear_size']))
 
-        elif args.args.arch == 'videopose':
+        elif args["arch"] == 'videopose':
             filter_widths = [1]
             for stage_id in range(args.stages):
                 filter_widths.append(1)  # filter_widths = [1, 1, 1, 1, 1]
