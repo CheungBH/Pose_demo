@@ -26,7 +26,7 @@ pose3d_config, pose3d_weight = config.pose3d_config, config.pose3d_weight
 
 class FrameProcessor:
     def __init__(self):
-        human = HumanDetector if yolo_pose else HumanDetector_yolopose
+        human = HumanDetector if not yolo_pose else HumanDetector_yolopose
         self.HP = human(detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg,
                         sort_type, deepsort_weight, classifiers_type, classifiers_weight, classifiers_config,
                         classifiers_labels, pose3d_config, pose3d_weight, device=device)

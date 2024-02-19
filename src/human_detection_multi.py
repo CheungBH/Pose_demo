@@ -26,7 +26,7 @@ class HumanDetector:
             self.action_map = cv2.VideoWriter("action_map.mp4", cv2.VideoWriter_fourcc(*'mp4v'), 10, (1500, 1200))
         # self.detector = PersonDetector(detector_cfg, detector_weight, device)
         # self.estimator = PoseEstimator(estimator_weight, estimator_model_cfg, estimator_data_cfg, device=device)
-        self.pose_det = YoloPose(detector_weight)
+        self.pose_det = YoloPose(detector_weight, device=self.device)
         self.tracker = PersonTracker(sort_type, device=device, model_path=deepsort_weight)
         self.classifier = EnsembleClassifier(classifiers_type, classifiers_weights, classifiers_config,
                                              classifiers_label, self.estimator.transform, device=device)

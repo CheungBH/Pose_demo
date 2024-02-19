@@ -5,9 +5,9 @@ device = "cpu"  # "cuda:0" or "cpu"
 yolo_pose = False
 # If choosing yolo_pose, you only need to assign detectors path.
 
-detector_cfg = "/Users/cheungbh/Documents/lab_code/PortableTennis/assets/yolo/s0p003_p88_bs8/cfg.cfg"
+detector_cfg = ""
 # Assign detector cfg to empty if you are using yolov7
-detector_weight = "/Users/cheungbh/Documents/lab_code/PortableTennis/assets/yolo/s0p003_p88_bs8/last.pt"
+detector_weight = "/Users/cheungbh/Documents/lab_code/yolov7/weights/yolov7.pt"
 detector_label = ""
 
 RgbVideoCap = 'rtsp://admin:fyp202020@192.168.8.111:554/Streaming/Channels/101/?transportmode=unicast --input-rtsp-latency=0'
