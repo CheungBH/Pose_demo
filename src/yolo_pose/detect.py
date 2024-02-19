@@ -9,7 +9,7 @@ import numpy as np
 import torch
 from .utils.datasets import letterbox
 from .models.experimental import attempt_load
-from utils.general import non_max_suppression, scale_coords
+from .utils.general import non_max_suppression, scale_coords
 
 tensor = torch.tensor
 
