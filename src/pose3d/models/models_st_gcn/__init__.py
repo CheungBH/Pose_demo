@@ -1,0 +1,1 @@
+from .st_gcn_single_frame_test import WrapSTGCN

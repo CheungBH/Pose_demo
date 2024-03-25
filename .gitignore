@@ -42,3 +42,4 @@ video_process_with_txt_jump.py
 *.mp4
 result.json
 demo_assets
+tennis_assets/

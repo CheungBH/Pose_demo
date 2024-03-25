@@ -1,4 +1,5 @@
 from .yolo.yolo import YoloDetector
+from .yolov7.detect import Yolov7Detector
 # from .nanodet.nanodet import NanoDetector
 # from .nanodet.util import Logger, cfg, load_config
 
@@ -16,6 +17,9 @@ class PersonDetector:
         elif cfg_file.endswith(".cfg"):
             self.algo = "yolov3"
             self.detector = YoloDetector(cfg_file, weight, device=device)
+        elif not cfg_file:
+            self.algo = "yolov7"
+            self.detector = Yolov7Detector(cfg_file, weight, device=device)
         else:
             raise ValueError("{} is not a cfg file!".format(cfg_file))
 
@@ -27,20 +31,16 @@ class PersonDetector:
         elif self.algo == "yolov3":
             boxes = self.detector.inference(frame)
             return boxes
+        elif self.algo == "yolov7":
+            boxes = self.detector.inference(frame)
+            return boxes
 
 
 if __name__ == '__main__':
     import cv2
-    cfg = "/home/hkuit164/Downloads/yolo_selected/coco_basic/pytorch/yolov3-original-1cls-leaky.cfg"
-    weight = "/home/hkuit164/Downloads/yolo_selected/coco_basic/pytorch/last.weights"
+    cfg = ""
+    weight = "../../asset/yolo/yolov7.pt"
+    img = "/Users/cheungbh/Documents/lab_code/yolov7/inference/images/horses.jpg"
 
-    detector = PersonDetector(cfg, weight)
-
-    img_path = "/media/hkuit164/Elements/data/posetrack18/images/test/000693_mpii_test/000013.jpg"
-    img = cv2.imread(img_path)
-    dets = detector.detect(img)
-    for bbox in dets:
-        bbox = bbox[:4].tolist()
-        img = cv2.rectangle(img, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), (255, 0, 0), 4)
-    cv2.imshow("result", img)
-    cv2.waitKey(0)
+    detector = PersonDetector(cfg, weight, conf_thresh=0.5, nms_thresh=0.5)
+    boxes = detector.detect(cv2.imread(img))
