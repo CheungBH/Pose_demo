@@ -3,7 +3,7 @@ from config import config as config
 import os
 import cv2
 from src.human_detection import HumanDetector
-from utils.visualize import Visualizer
+from util.visualize import Visualizer
 import json
 
 image_ext = ["jpg", "jpeg", "webp", "bmp", "png", "JPG"]

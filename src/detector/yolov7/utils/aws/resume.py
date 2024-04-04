@@ -1,5 +1,5 @@
 # Resume all interrupted trainings in yolor/ dir including DDP trainings
-# Usage: $ python utils/aws/resume.py
+# Usage: $ python util/aws/resume.py
 
 import os
 import sys

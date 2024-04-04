@@ -575,14 +575,14 @@ def print_model_biases(model):
               'classification: %5.2f+/-%-5.2f' % (b[:, 5:].mean(), b[:, 5:].std()))
 
 
-def strip_optimizer(f='weights/last.pt'):  # from utils.utils import *; strip_optimizer()
+def strip_optimizer(f='weights/last.pt'):  # from util.util import *; strip_optimizer()
     # Strip optimizer from *.pt files for lighter files (reduced by 2/3 size)
     x = torch.load(f)
     x['optimizer'] = None
     torch.save(x, f)
 
 
-def create_backbone(f='weights/last.pt'):  # from utils.utils import *; create_backbone()
+def create_backbone(f='weights/last.pt'):  # from util.util import *; create_backbone()
     # create a backbone from a *.pt file
     x = torch.load(f)
     x['optimizer'] = None
@@ -616,14 +616,14 @@ def coco_only_people(path='../coco/labels/val2014/'):
             print(labels.shape[0], file)
 
 
-def select_best_evolve(path='evolve*.txt'):  # from utils.utils import *; select_best_evolve()
+def select_best_evolve(path='evolve*.txt'):  # from util.util import *; select_best_evolve()
     # Find best evolved mutation
     for file in sorted(glob.glob(path)):
         x = np.loadtxt(file, dtype=np.float32, ndmin=2)
         print(file, x[fitness(x).argmax()])
 
 
-def crop_images_random(path='../images/', scale=0.50):  # from utils.utils import *; crop_images_random()
+def crop_images_random(path='../images/', scale=0.50):  # from util.util import *; crop_images_random()
     # crops images into random squares up to scale fraction
     # WARNING: overwrites images!
     for file in tqdm(sorted(glob.glob('%s/*.*' % path))):
@@ -647,7 +647,7 @@ def crop_images_random(path='../images/', scale=0.50):  # from utils.utils impor
 
 
 def coco_single_class_labels(path='../coco/labels/train2014/', label_class=43):
-    # Makes single-class coco datasets. from utils.utils import *; coco_single_class_labels()
+    # Makes single-class coco datasets. from util.util import *; coco_single_class_labels()
     if os.path.exists('new/'):
         shutil.rmtree('new/')  # delete output folder
     os.makedirs('new/')  # make new output folder
@@ -668,7 +668,7 @@ def coco_single_class_labels(path='../coco/labels/train2014/', label_class=43):
             shutil.copyfile(src=img_file, dst='new/images/' + Path(file).name.replace('txt', 'jpg'))  # copy images
 
 
-def kmeans_targets(path='../coco/trainvalno5k.txt', n=9, img_size=416):  # from utils.utils import *; kmeans_targets()
+def kmeans_targets(path='../coco/trainvalno5k.txt', n=9, img_size=416):  # from util.util import *; kmeans_targets()
     # Produces a list of target kmeans suitable for use in *.cfg files
     from utils.datasets import LoadImagesAndLabels
     from scipy import cluster
@@ -739,7 +739,7 @@ def plot_one_box(x, img, color=None, label=None, line_thickness=None):
         cv2.putText(img, label, (c1[0], c1[1] - 2), 0, tl / 3, [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
 
 
-def plot_wh_methods():  # from utils.utils import *; plot_wh_methods()
+def plot_wh_methods():  # from util.util import *; plot_wh_methods()
     # Compares the two methods for width-height anchor multiplication
     # https://github.com/ultralytics/yolov3/issues/168
     x = np.arange(-4.0, 4.0, .1)
@@ -824,7 +824,7 @@ def plot_images(imgs, targets, paths=None, fname='images.jpg'):
     plt.close()
 
 
-def plot_test_txt():  # from utils.utils import *; plot_test()
+def plot_test_txt():  # from util.util import *; plot_test()
     # Plot test.txt histograms
     x = np.loadtxt('test.txt', dtype=np.float32)
     box = xyxy2xywh(x[:, :4])
@@ -843,7 +843,7 @@ def plot_test_txt():  # from utils.utils import *; plot_test()
     plt.savefig('hist1d.jpg', dpi=200)
 
 
-def plot_targets_txt():  # from utils.utils import *; plot_targets_txt()
+def plot_targets_txt():  # from util.util import *; plot_targets_txt()
     # Plot test.txt histograms
     x = np.loadtxt('targets.txt', dtype=np.float32)
     x = x.T
@@ -859,7 +859,7 @@ def plot_targets_txt():  # from utils.utils import *; plot_targets_txt()
     plt.savefig('targets.jpg', dpi=200)
 
 
-def plot_evolution_results(hyp):  # from utils.utils import *; plot_evolution_results(hyp)
+def plot_evolution_results(hyp):  # from util.util import *; plot_evolution_results(hyp)
     # Plot hyperparameter evolution results in evolve.txt
     x = np.loadtxt('evolve.txt', ndmin=2)
     f = fitness(x)
@@ -879,7 +879,7 @@ def plot_evolution_results(hyp):  # from utils.utils import *; plot_evolution_re
     plt.savefig('evolve.png', dpi=200)
 
 
-def plot_results(dir, start=0, stop=0):  # from utils.utils import *; plot_results()
+def plot_results(dir, start=0, stop=0):  # from util.util import *; plot_results()
     # Plot training results files 'results*.txt'
     fig, ax = plt.subplots(2, 5, figsize=(14, 7))
     ax = ax.ravel()
@@ -903,7 +903,7 @@ def plot_results(dir, start=0, stop=0):  # from utils.utils import *; plot_resul
     fig.savefig(os.path.join(dir, 'results.png'), dpi=200)
 
 
-def plot_results_overlay(start=0, stop=0):  # from utils.utils import *; plot_results_overlay()
+def plot_results_overlay(start=0, stop=0):  # from util.util import *; plot_results_overlay()
     # Plot training results files 'results*.txt', overlaying train and val losses
     s = ['train', 'train', 'train', 'Precision', 'mAP', 'val', 'val', 'val', 'Recall', 'F1']  # legends
     t = ['GIoU', 'Objectness', 'Classification', 'P-R', 'mAP-F1']  # titles

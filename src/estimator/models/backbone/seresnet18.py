@@ -142,7 +142,7 @@ def create(cfg=None): # with maxpooling
 
 
 def test():
-    net = create(cfg="../utils/pruned/cfg_shortcut_seresnet18.json")
+    net = create(cfg="../util/pruned/cfg_shortcut_seresnet18.json")
     y = net(torch.randn(1,3,64,64))
     print(net, file=open("SEResnet.txt","w"))
     print(y.size())

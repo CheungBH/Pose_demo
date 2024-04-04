@@ -14,6 +14,7 @@ class Yolov7Detector:
         set_logging()
         self.device = select_device(device)
         self.model = attempt_load(weight, map_location=device)  # load FP32 model
+        self.model.eval()
         self.stride = int(self.model.stride.max())  # model stride
         self.img_size = img_size
         self.img_size = check_img_size(self.img_size, s=self.stride)
@@ -25,7 +26,7 @@ class Yolov7Detector:
         img = letterbox(img, self.img_size, stride=self.stride)[0]
         img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
         img = np.ascontiguousarray(img)
-        img = torch.from_numpy(img).to(self.device)
+        img = torch.from_numpy(img).to(self.device).float()
         img /= 255.0  # 0 - 255 to 0.0 - 1.0
         if img.ndimension() == 3:
             img = img.unsqueeze(0)

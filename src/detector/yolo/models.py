@@ -100,7 +100,7 @@ def create_modules(module_defs, img_size, arc):
                 bias[:, 5:] += b[1] - bias[:, 5:].mean()  # cls
                 # bias = torch.load('weights/yolov3-spp.bias.pt')[yolo_index]  # list of tensors [3x85, 3x85, 3x85]
                 module_list[-1][0].bias = torch.nn.Parameter(bias.view(-1))
-                # utils.print_model_biases(model)
+                # util.print_model_biases(model)
             except:
                 print('WARNING: smart bias initialization failure.')
 

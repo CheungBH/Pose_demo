@@ -81,7 +81,7 @@ def build_reid_train_loader(
     This interface is experimental.
 
     Returns:
-        torch.utils.data.DataLoader: a dataloader.
+        torch.util.data.DataLoader: a dataloader.
     """
 
     mini_batch_size = total_batch_size // comm.get_world_size()

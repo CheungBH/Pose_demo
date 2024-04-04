@@ -1,4 +1,4 @@
-# PyTorch utils
+# PyTorch util
 
 import datetime
 import logging

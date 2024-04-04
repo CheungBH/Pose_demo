@@ -3,6 +3,9 @@ from config import config as config
 import os
 import cv2
 import time
+import sys
+sys.path.insert(0, '/Users/cheungbh/Documents/lab_code/yolov7')
+
 
 image_ext = ["jpg", "jpeg", "webp", "bmp", "png", "JPG"]
 video_ext = ["mp4", "mov", "avi", "mkv", "MP4"]

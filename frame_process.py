@@ -2,9 +2,9 @@ from src.human_detection import HumanDetector
 from src.human_detection_multi import HumanDetector as HumanDetector_yolopose
 import cv2
 from config import config as config
-from utils.generate_json import JsonGenerator
-from utils.filter_result import ResultFilterer
-from utils.visualize import Visualizer
+from util.generate_json import JsonGenerator
+from util.filter_result import ResultFilterer
+from util.visualize import Visualizer
 
 
 yolo_pose = config.yolo_pose

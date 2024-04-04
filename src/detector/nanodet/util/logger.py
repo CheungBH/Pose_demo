@@ -48,7 +48,7 @@ class Logger:
             except ImportError:
                 raise ImportError(
                     'Please run "pip install future tensorboard" to install '
-                    "the dependencies to use torch.utils.tensorboard "
+                    "the dependencies to use torch.util.tensorboard "
                     "(applicable to PyTorch 1.1 or higher)"
                 )
             if self.rank < 1:
