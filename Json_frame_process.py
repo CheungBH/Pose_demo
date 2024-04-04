@@ -1,8 +1,8 @@
 import os
 import cv2
 import config.config as config
-from utils.parse_json import JsonParser
-from utils.visualize import Visualizer
+from util.parse_json import JsonParser
+from util.visualize import Visualizer
 
 # filter_criterion = config.filter_criterion
 
