@@ -25,7 +25,7 @@ class YoloPose:
         self.conf_thresh = conf_thresh
         self.nms_thresh = nms_thresh
         self.kps = 17
-        self.raw_img_size = (1080, 1920, 3)
+        self.raw_img_size = (720, 1080, 3)
 
     def process(self, img):
         img = letterbox(img, self.img_size, stride=self.stride, auto=False)[0]

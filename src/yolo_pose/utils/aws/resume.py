@@ -1,5 +1,5 @@
 # Resume all interrupted trainings in yolov5/ dir including DDP trainings
-# Usage: $ python util/aws/resume.py
+# Usage: $ python utils/aws/resume.py
 
 import os
 import sys

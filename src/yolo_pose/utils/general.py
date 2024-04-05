@@ -1,4 +1,4 @@
-# YOLOv5 general util
+# YOLOv5 general utils
 
 import glob
 import logging
@@ -537,8 +537,8 @@ def non_max_suppression(prediction, conf_thres=0.25, iou_thres=0.45, classes=Non
                 conf, j = x[:, 5:].max(1, keepdim=True)
                 x = torch.cat((box, conf, j.float()), 1)[conf.view(-1) > conf_thres]
             else:
-                kpts = x[:, 6:]
-                conf, j = x[:, 5:6].max(1, keepdim=True)
+                kpts = x[:, 5+nc:]
+                conf, j = x[:, 5:5+nc].max(1, keepdim=True)
                 x = torch.cat((box, conf, j.float(), kpts), 1)[conf.view(-1) > conf_thres]
 
 
@@ -611,7 +611,7 @@ def non_max_suppression_export(prediction, conf_thres=0.25, iou_thres=0.45, clas
     return output
 
 
-def strip_optimizer(f='best.pt', s=''):  # from util.general import *; strip_optimizer()
+def strip_optimizer(f='best.pt', s=''):  # from utils.general import *; strip_optimizer()
     # Strip optimizer from 'f' to finalize training, optionally save as 's'
     x = torch.load(f, map_location=torch.device('cpu'))
     if x.get('ema'):
