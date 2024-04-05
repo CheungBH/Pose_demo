@@ -12,6 +12,7 @@ from .models.experimental import attempt_load
 from .utils.general import non_max_suppression, scale_coords
 
 tensor = torch.tensor
+from config.config import out_size
 
 
 class YoloPose:
@@ -24,6 +25,7 @@ class YoloPose:
         self.conf_thresh = conf_thresh
         self.nms_thresh = nms_thresh
         self.kps = 17
+        self.raw_img_size = (1080, 1920, 3)
 
     def process(self, img):
         img = letterbox(img, self.img_size, stride=self.stride, auto=False)[0]
@@ -44,8 +46,8 @@ class YoloPose:
         # for i, det in enumerate(pred):
         if len(pred):
             # pred_len = len(pred)
-            # scale_coords(img.shape[2:], pred[:, :4], img.shape, kpt_label=False)
-            # scale_coords(img.shape[2:], pred[:, 6:], img.shape, kpt_label=True, step=3)
+            scale_coords(img.shape[2:], pred[:, :4], self.raw_img_size, kpt_label=False)
+            scale_coords(img.shape[2:], pred[:, 6:], self.raw_img_size, kpt_label=True, step=3)
             boxes = pred[..., :6]
             # kps_origin
             kps_x, kps_y = pred[..., -51::3], pred[..., -50::3]
