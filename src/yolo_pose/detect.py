@@ -17,7 +17,7 @@ from config.config import out_size
 
 class YoloPose:
 
-    def __init__(self, weights, device="cuda:0", img_size=640, conf_thresh=0.8, nms_thresh=0.5):
+    def __init__(self, weights, device="cuda:0", img_size=640, conf_thresh=0.25, nms_thresh=0.45):
         self.device = device
         self.model = attempt_load(weights, map_location=device)
         self.stride = int(self.model.stride.max())  # model stride
