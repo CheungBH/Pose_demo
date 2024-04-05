@@ -31,24 +31,36 @@ class YoloPose:
         img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
         img = np.ascontiguousarray(img)
 
-        img = torch.from_numpy(img).to(self.device)
+        img = torch.from_numpy(img).to(self.device).float()
         img /= 255.0
         if img.ndimension() == 3:
             img = img.unsqueeze(0)
 
         pred = self.model(img, augment=False)[0]
         pred = non_max_suppression(pred, self.conf_thresh, self.nms_thresh, classes=None, agnostic=False,
-                                   kpt_label=True)
+                                   kpt_label=True)[0]
 
-        boxes, kps, kps_score = [], [], []
-        pred_len = len(pred)
-        for i, det in enumerate(pred):
-            if len(det):
-                scale_coords(img.shape[2:], det[:, :4], img.shape, kpt_label=False)
-                scale_coords(img.shape[2:], det[:, 6:], img.shape, kpt_label=True, step=3)
-                boxes.append(det[:, :6].tolist + [1])
-                kps.append([k.tolist() for i, k in enumerate(det[:, 6:]) if (i + 1) % 3 == 0])
-                kps_score.append([k.tolist() for i, k in enumerate(det[:, 6:]) if (i + 1) % 3 != 0])
-        return tensor([boxes]), tensor([kps]).reshape(pred_len, -1, 2), tensor([kps_score])
+        # boxes, kps, kps_score = [], [], []
+        # for i, det in enumerate(pred):
+        if len(pred):
+            # pred_len = len(pred)
+            # scale_coords(img.shape[2:], pred[:, :4], img.shape, kpt_label=False)
+            # scale_coords(img.shape[2:], pred[:, 6:], img.shape, kpt_label=True, step=3)
+            boxes = pred[..., :6]
+            # kps_origin
+            kps_x, kps_y = pred[..., -51::3], pred[..., -50::3]
+            # kps_raw = torch.cat((pred[..., -51::3], pred[..., -50::3]), dim=1)#.reshape(-1, self.kps, 2).tolist()
+            kps = kps_x[..., 0].unsqueeze(dim=0)
+            for kp in range(self.kps):
+                kps = torch.cat((kps, kps_x[..., kp].unsqueeze(dim=0)), dim=0)
+                kps = torch.cat((kps, kps_y[..., kp].unsqueeze(dim=0)), dim=0)
+            kps = kps[1:, :].T
+            # kps = kps.view(-1, self.kps, 2).transpose(1, 2).contiguous().view(-1, self.kps * 2)
+            # kps = [k.tolist() for i, k in enumerate(pred[0][..., -51::3]) if i % 3 != 0]
+            kps_score = pred[..., -49::3]
+            return boxes, kps, kps_score
+            # return tensor([boxes]), tensor([kps]).reshape(pred_len, -1, 2), tensor([kps_score])
+        else:
+            return [], [], []
 
 

@@ -4,11 +4,15 @@ import os
 import cv2
 import time
 import sys
-sys.path.insert(0, '/Users/cheungbh/Documents/lab_code/yolov7')
+
+if config.yolo_pose:
+    sys.path.insert(0, '/Users/cheungbh/Documents/lab_code/yolov7_pose')
+else:
+    sys.path.insert(0, '/Users/cheungbh/Documents/lab_code/yolov7')
 
 
 image_ext = ["jpg", "jpeg", "webp", "bmp", "png", "JPG"]
-video_ext = ["mp4", "mov", "avi", "mkv", "MP4"]
+video_ext = ["mp4", "mov", "avi", "mkv", "MP4", "MOV", "AVI", "MKV"]
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 fps = 12
 

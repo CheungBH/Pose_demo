@@ -26,10 +26,11 @@ class HumanDetector:
             self.action_map = cv2.VideoWriter("action_map.mp4", cv2.VideoWriter_fourcc(*'mp4v'), 10, (1500, 1200))
         # self.detector = PersonDetector(detector_cfg, detector_weight, device)
         # self.estimator = PoseEstimator(estimator_weight, estimator_model_cfg, estimator_data_cfg, device=device)
+        detector_weight = "/Users/cheungbh/Documents/lab_code/yolov7_pose/weights/yolov7-w6-pose.pt"
         self.pose_det = YoloPose(detector_weight, device=self.device)
         self.tracker = PersonTracker(sort_type, device=device, model_path=deepsort_weight)
         self.classifier = EnsembleClassifier(classifiers_type, classifiers_weights, classifiers_config,
-                                             classifiers_label, self.estimator.transform, device=device)
+                                             classifiers_label, None, device=device)
         if pose3d_cfg and pose3d_weight:
             self.pose3d = Pose3dLifter(pose3d_cfg, pose3d_weight, device=device, num_kps=self.pose_det.kps)
 
@@ -52,7 +53,7 @@ class HumanDetector:
                 curr_time = time.time()
             if len(self.boxes) > 0:
                 self.dets_cls = self.boxes[:,-1]
-                self.ids, self.boxes = self.tracker.update(self.boxes[:, :4], copy.deepcopy(frame))
+                self.ids, self.boxes = self.tracker.update(self.boxes, copy.deepcopy(frame))
 
                 if print_time:
                     print("Tracker uses: {}s".format(round((time.time() - curr_time), 4)))

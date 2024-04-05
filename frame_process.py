@@ -42,7 +42,7 @@ class FrameProcessor:
                 json_path = ""
             self.Json = JsonGenerator(json_path)
         self.filter = ResultFilterer(filter_criterion)
-        self.visualizer = Visualizer(self.HP.estimator.kps, det_label=detector_label, bg_type=bg_type,
+        self.visualizer = Visualizer(17, det_label=detector_label, bg_type=bg_type,
                                      kps_color_type=kps_color_type)
 
     def process(self, frame, cnt=0):
