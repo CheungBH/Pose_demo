@@ -10,7 +10,7 @@ from .utils.torch_utils import select_device, load_classifier, time_synchronized
 
 
 class Yolov7Detector:
-    def __init__(self, cfg="", weight="", device="cpu", img_size=640, conf_thresh=0.8, nms_thresh=0.5):
+    def __init__(self, cfg="", weight="", device="cpu", img_size=640, conf_thresh=0.25, nms_thresh=0.45):
         set_logging()
         self.device = select_device(device)
         self.model = attempt_load(weight, map_location=device)  # load FP32 model
@@ -21,6 +21,7 @@ class Yolov7Detector:
         self.model = TracedModel(self.model, device, img_size)
         self.conf = conf_thresh
         self.nms = nms_thresh
+        self.original_img_size = (720, 1280, 3)
 
     def process(self, img):
         img = letterbox(img, self.img_size, stride=self.stride)[0]
@@ -31,9 +32,9 @@ class Yolov7Detector:
         if img.ndimension() == 3:
             img = img.unsqueeze(0)
         pred = self.model(img)[0]
-        pred[:, :4] = scale_coords(img.shape[2:], pred[:, :4], img.shape).round()
-        pred = non_max_suppression(pred, self.conf, self.nms)
-        pred = torch.cat((pred, torch.zeros_like(pred[..., :1])), dim=-1)
+        pred = non_max_suppression(pred, self.conf, self.nms)[0]
+        pred[:, :4] = scale_coords(img.shape[2:], pred[:, :4], self.original_img_size).round()
+        pred = torch.cat((pred[..., :5], torch.ones_like(pred[..., :1]), pred[..., 5:]), dim=-1)
         return pred
 
 

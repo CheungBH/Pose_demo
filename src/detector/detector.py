@@ -33,7 +33,7 @@ class PersonDetector:
             return boxes
         elif self.algo == "yolov7":
             boxes = self.detector.process(frame)
-            return boxes[0]
+            return boxes
 
 
 if __name__ == '__main__':
