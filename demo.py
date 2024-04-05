@@ -6,9 +6,12 @@ import time
 import sys
 
 if config.yolo_pose:
+    insert_path = config.yolov7_pose_path
     sys.path.insert(0, '/Users/cheungbh/Documents/lab_code/yolov7_pose')
 else:
-    sys.path.insert(0, '/Users/cheungbh/Documents/lab_code/yolov7')
+    if not config.detector_cfg:
+        insert_path = config.yolov7_path
+        sys.path.insert(0, '/Users/cheungbh/Documents/lab_code/yolov7')
 
 
 image_ext = ["jpg", "jpeg", "webp", "bmp", "png", "JPG"]

@@ -2,13 +2,19 @@ import os, torch
 
 device = "cpu"  # "cuda:0" or "cpu"
 
-yolo_pose = False
+yolo_pose = True
+
+# If you are using yolov7, you need to assign yolov7_pose_path OR yolov7_path.
+# Otherwise, you will encounter an error "no module named 'models'"
+
+yolov7_pose_path = "/Users/cheungbh/Documents/lab_code/yolov7_pose"
+yolov7_path = "/Users/cheungbh/Documents/lab_code/yolov7"
 # If choosing yolo_pose, you only need to assign detectors path.
 
 detector_cfg = ""
 # Assign detector cfg to empty if you are using yolov7
-detector_weight = "/Users/cheungbh/Documents/lab_code/yolov7/weights/yolov7.pt"
-detector_label = ""
+detector_weight = "tennis_assets/mc_yolopose/last.pt"
+detector_label = "tennis_assets/yolov7_4cls/label.txt"
 
 RgbVideoCap = 'rtsp://admin:fyp202020@192.168.8.111:554/Streaming/Channels/101/?transportmode=unicast --input-rtsp-latency=0'
 TherVideoCap = 'rtsp://admin:fyp202020@192.168.8.111:554/Streaming/Channels/201/?transportmode=unicast --input-rtsp-latency=0'
@@ -39,7 +45,7 @@ pose3d_config = ""
 pose3d_weight = ""
 
 output_src = "output.mp4"
-input_src = "asset/video/video_input3.mp4"
+input_src = "tennis_assets/videos/20240131_xzy_test_yt_10.mp4"
 #output_src = "/media/hkuit164/Backup/free_1_thermal (online-video-cutter.com)_detectionresult.mp4"
 out_size = (1280, 720)
 show_size = (1280, 720)

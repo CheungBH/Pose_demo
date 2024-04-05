@@ -21,9 +21,9 @@ class Yolov7Detector:
         self.model = TracedModel(self.model, device, img_size)
         self.conf = conf_thresh
         self.nms = nms_thresh
-        self.original_img_size = (720, 1280, 3)
 
     def process(self, img):
+        raw_img_size = (img.shape[0], img.shape[1], img.shape[2])
         img = letterbox(img, self.img_size, stride=self.stride)[0]
         img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
         img = np.ascontiguousarray(img)
@@ -33,7 +33,7 @@ class Yolov7Detector:
             img = img.unsqueeze(0)
         pred = self.model(img)[0]
         pred = non_max_suppression(pred, self.conf, self.nms)[0]
-        pred[:, :4] = scale_coords(img.shape[2:], pred[:, :4], self.original_img_size).round()
+        pred[:, :4] = scale_coords(img.shape[2:], pred[:, :4], raw_img_size).round()
         pred = torch.cat((pred[..., :5], torch.ones_like(pred[..., :1]), pred[..., 5:]), dim=-1)
         return pred
 

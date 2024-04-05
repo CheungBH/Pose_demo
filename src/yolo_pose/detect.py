@@ -28,6 +28,7 @@ class YoloPose:
         self.raw_img_size = (720, 1080, 3)
 
     def process(self, img):
+        raw_img_size = (img.shape[0], img.shape[1], img.shape[2])
         img = letterbox(img, self.img_size, stride=self.stride, auto=False)[0]
 
         img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
@@ -46,8 +47,8 @@ class YoloPose:
         # for i, det in enumerate(pred):
         if len(pred):
             # pred_len = len(pred)
-            scale_coords(img.shape[2:], pred[:, :4], self.raw_img_size, kpt_label=False)
-            scale_coords(img.shape[2:], pred[:, 6:], self.raw_img_size, kpt_label=True, step=3)
+            scale_coords(img.shape[2:], pred[:, :4], raw_img_size, kpt_label=False)
+            scale_coords(img.shape[2:], pred[:, 6:], raw_img_size, kpt_label=True, step=3)
             boxes = pred[..., :6]
             # kps_origin
             kps_x, kps_y = pred[..., -51::3], pred[..., -50::3]
