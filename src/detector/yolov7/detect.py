@@ -33,6 +33,7 @@ class Yolov7Detector:
         pred = self.model(img)[0]
         pred[:, :4] = scale_coords(img.shape[2:], pred[:, :4], img.shape).round()
         pred = non_max_suppression(pred, self.conf, self.nms)
+        pred = torch.cat((pred, torch.zeros_like(pred[..., :1])), dim=-1)
         return pred
 
 

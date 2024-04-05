@@ -58,7 +58,9 @@ class YoloPose:
             # kps = kps.view(-1, self.kps, 2).transpose(1, 2).contiguous().view(-1, self.kps * 2)
             # kps = [k.tolist() for i, k in enumerate(pred[0][..., -51::3]) if i % 3 != 0]
             kps_score = pred[..., -49::3]
-            return boxes, kps, kps_score
+            # Add a final 0 to the prediction
+            boxes = torch.cat((boxes, torch.zeros_like(boxes[..., :1])), dim=-1)
+            return boxes, kps.view(-1, self.kps, 2), kps_score.view(-1, self.kps, 1)
             # return tensor([boxes]), tensor([kps]).reshape(pred_len, -1, 2), tensor([kps_score])
         else:
             return [], [], []

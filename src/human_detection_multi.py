@@ -88,6 +88,7 @@ class HumanDetector:
 
     def convert_result_to_tensor(self):
         self.ids = tensor(self.ids)
+        self.boxes = tensor(self.boxes)
 
     def debug_for_tracking(self, frame):
         iou_map = self.tracker.plot_iou_map(np.ones_like(frame))
