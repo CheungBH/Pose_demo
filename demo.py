@@ -7,11 +7,11 @@ import sys
 
 if config.yolo_pose:
     insert_path = config.yolov7_pose_path
-    sys.path.insert(0, '/Users/cheungbh/Documents/lab_code/yolov7_pose')
+    sys.path.insert(0, insert_path)
 else:
     if not config.detector_cfg:
         insert_path = config.yolov7_path
-        sys.path.insert(0, '/Users/cheungbh/Documents/lab_code/yolov7')
+        sys.path.insert(0, insert_path)
 
 
 image_ext = ["jpg", "jpeg", "webp", "bmp", "png", "JPG"]
