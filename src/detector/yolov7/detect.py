@@ -14,6 +14,7 @@ class Yolov7Detector:
         set_logging()
         self.device = select_device(device)
         self.model = attempt_load(weight, map_location=device)  # load FP32 model
+        self.half = self.device.type != 'cpu'  # half precision only supported on CUDA
         self.model.eval()
         self.stride = int(self.model.stride.max())  # model stride
         self.img_size = img_size
@@ -21,13 +22,18 @@ class Yolov7Detector:
         self.model = TracedModel(self.model, device, img_size)
         self.conf = conf_thresh
         self.nms = nms_thresh
+        if self.half:
+            self.model.half()
 
     def process(self, img):
         raw_img_size = (img.shape[0], img.shape[1], img.shape[2])
         img = letterbox(img, self.img_size, stride=self.stride)[0]
         img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
         img = np.ascontiguousarray(img)
-        img = torch.from_numpy(img).to(self.device).float()
+        if self.half:
+            img = torch.from_numpy(img).to(self.device).half()
+        else:
+            img = torch.from_numpy(img).to(self.device).float()
         img /= 255.0  # 0 - 255 to 0.0 - 1.0
         if img.ndimension() == 3:
             img = img.unsqueeze(0)

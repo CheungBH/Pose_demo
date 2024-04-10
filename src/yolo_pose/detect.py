@@ -19,13 +19,17 @@ class YoloPose:
 
     def __init__(self, weights, device="cuda:0", img_size=640, conf_thresh=0.25, nms_thresh=0.45):
         self.device = device
+        self.half = True if self.device != "cpu" else False
         self.model = attempt_load(weights, map_location=device)
         self.stride = int(self.model.stride.max())  # model stride
         self.img_size = img_size
         self.conf_thresh = conf_thresh
         self.nms_thresh = nms_thresh
         self.kps = 17
-        self.raw_img_size = (720, 1080, 3)
+        # self.raw_img_size = (720, 1080, 3)
+        self.model.eval()
+        if self.half:
+            self.model.half()
 
     def process(self, img):
         raw_img_size = (img.shape[0], img.shape[1], img.shape[2])
@@ -33,8 +37,10 @@ class YoloPose:
 
         img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
         img = np.ascontiguousarray(img)
-
-        img = torch.from_numpy(img).to(self.device).float()
+        if self.half:
+            img = torch.from_numpy(img).to(self.device).half()
+        else:
+            img = torch.from_numpy(img).to(self.device).float()
         img /= 255.0
         if img.ndimension() == 3:
             img = img.unsqueeze(0)
