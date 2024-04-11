@@ -29,6 +29,8 @@ classe_name = ["Stand", "Swim", "Warning"]
 
 
 def read_content(file_path):
+    if not os.path.exists(file_path):
+        return []
     with open(file_path, 'r', encoding='utf-8') as file:
         return file.readlines()
 
