@@ -6,9 +6,10 @@ from PIL import ImageColor
 
 
 class Visualizer:
-    def __init__(self, kps_num, bg_type="raw", det_label="", kps_thresh=kps_conf, kps_color_type="COCO", color_by_id=True):
+    def __init__(self, kps_num, bg_type="raw", det_label="", kps_thresh=kps_conf, kps_color_type="COCO", color_type="by_label"):
         self.IDV = IDVisualizer()
-        self.color_by_id = color_by_id
+        self.color_type = color_type
+        assert color_type in ["normal", "by_id", "by_label"], "Unsupported color type: {}".format(color_type)
         if kps_color_type == "COCO":
             self.KPV = KeyPointVisualizer(kps_num, "coco", thresh=kps_thresh)
         elif kps_color_type == "per_id":
@@ -22,13 +23,13 @@ class Visualizer:
         assert bg_type in ["raw", "black"], "Unsupported background type: {}".format(bg_type)
         self.kps_color_type = kps_color_type
         # Define 10 differet colors
-        self.colors = ["", (0, 255, 255), (0, 191, 255), (0, 255, 102), (0, 77, 255), (0, 255, 0), (255, 0, 0),
+        self.colors = [(128, 128, 128), (0, 255, 255), (0, 191, 255), (0, 255, 102), (0, 77, 255), (0, 255, 0), (255, 0, 0),
                        (255, 255, 0), (0, 0, 255)]
 
     def visualize(self, image, ids, boxes, boxes_cls, kps, kps_scores):
         vis_img = np.full(image.shape, 0, dtype=np.uint8) if self.bg_type == "black" else image.copy()
         if len(ids) > 0:
-            if not self.color_by_id:
+            if self.color_type == "normal":
                 # if self.bg_type == "raw":
                 self.BBV.visualize(boxes, vis_img, boxes_cls)
                 self.IDV.plot_bbox_id(self.get_id2bbox(ids, boxes), vis_img)
@@ -36,13 +37,19 @@ class Visualizer:
                     self.KPV.visualize(vis_img, kps, kps_scores)
                 else:
                     self.KPV.visualize(vis_img, ids, kps, kps_scores)
-            else:
+            elif self.color_type == "by_id":
                 for i, (id, box, box_cls, kp, kp_score) in enumerate(zip(ids, boxes, boxes_cls, kps, kps_scores)):
                     color = self.colors[int(id.tolist())]
                     # if self.bg_type == "raw":
                     self.BBV.visualize([box], vis_img, [box_cls], color)
                     self.IDV.plot_bbox_id({id: box}, vis_img, color=(color, color))
                     self.KPV.visualize(vis_img,  kp.unsqueeze(dim=0), kp_score.unsqueeze(dim=0), color=color)
+            else: # by label
+                for i, (id, box, box_cls, kp, kp_score) in enumerate(zip(ids, boxes, boxes_cls, kps, kps_scores)):
+                    color = self.colors[int(box_cls.tolist())]
+                    self.BBV.visualize([box], vis_img, [box_cls], color)
+                    self.IDV.plot_bbox_id({id: box}, vis_img, color=(color, color))
+                    self.KPV.visualize(vis_img, kp.unsqueeze(dim=0), kp_score.unsqueeze(dim=0), color=color)
         return vis_img
 
     def get_labels(self):
