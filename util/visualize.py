@@ -29,9 +29,9 @@ class Visualizer:
         vis_img = np.full(image.shape, 0, dtype=np.uint8) if self.bg_type == "black" else image.copy()
         if len(ids) > 0:
             if not self.color_by_id:
-                if self.bg_type == "raw":
-                    self.BBV.visualize(boxes, vis_img, boxes_cls)
-                    self.IDV.plot_bbox_id(self.get_id2bbox(ids, boxes), vis_img)
+                # if self.bg_type == "raw":
+                self.BBV.visualize(boxes, vis_img, boxes_cls)
+                self.IDV.plot_bbox_id(self.get_id2bbox(ids, boxes), vis_img)
                 if self.kps_color_type == "COCO":
                     self.KPV.visualize(vis_img, kps, kps_scores)
                 else:
@@ -39,10 +39,10 @@ class Visualizer:
             else:
                 for i, (id, box, box_cls, kp, kp_score) in enumerate(zip(ids, boxes, boxes_cls, kps, kps_scores)):
                     color = self.colors[int(id.tolist())]
-                    if self.bg_type == "raw":
-                        self.BBV.visualize([box], vis_img, [box_cls], color)
-                        self.IDV.plot_bbox_id({id: box}, vis_img, color=(color, color))
-                        self.KPV.visualize(vis_img,  kp.unsqueeze(dim=0), kp_score.unsqueeze(dim=0), color=color)
+                    # if self.bg_type == "raw":
+                    self.BBV.visualize([box], vis_img, [box_cls], color)
+                    self.IDV.plot_bbox_id({id: box}, vis_img, color=(color, color))
+                    self.KPV.visualize(vis_img,  kp.unsqueeze(dim=0), kp_score.unsqueeze(dim=0), color=color)
         return vis_img
 
     def get_labels(self):
