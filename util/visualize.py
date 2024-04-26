@@ -6,8 +6,9 @@ from PIL import ImageColor
 
 
 class Visualizer:
-    def __init__(self, kps_num, bg_type="raw", det_label="", kps_thresh=kps_conf, kps_color_type="COCO"):
+    def __init__(self, kps_num, bg_type="raw", det_label="", kps_thresh=kps_conf, kps_color_type="COCO", color_by_id=True):
         self.IDV = IDVisualizer()
+        self.color_by_id = color_by_id
         if kps_color_type == "COCO":
             self.KPV = KeyPointVisualizer(kps_num, "coco", thresh=kps_thresh)
         elif kps_color_type == "per_id":
@@ -20,17 +21,28 @@ class Visualizer:
         self.bg_type = bg_type
         assert bg_type in ["raw", "black"], "Unsupported background type: {}".format(bg_type)
         self.kps_color_type = kps_color_type
+        # Define 10 differet colors
+        self.colors = ["", (0, 255, 255), (0, 191, 255), (0, 255, 102), (0, 77, 255), (0, 255, 0), (255, 0, 0),
+                       (255, 255, 0), (0, 0, 255)]
 
     def visualize(self, image, ids, boxes, boxes_cls, kps, kps_scores):
         vis_img = np.full(image.shape, 0, dtype=np.uint8) if self.bg_type == "black" else image.copy()
         if len(ids) > 0:
-            if self.bg_type == "raw":
-                self.BBV.visualize(boxes, vis_img, boxes_cls)
-                self.IDV.plot_bbox_id(self.get_id2bbox(ids, boxes), vis_img)
-            if self.kps_color_type == "COCO":
-                self.KPV.visualize(vis_img, kps, kps_scores)
+            if not self.color_by_id:
+                if self.bg_type == "raw":
+                    self.BBV.visualize(boxes, vis_img, boxes_cls)
+                    self.IDV.plot_bbox_id(self.get_id2bbox(ids, boxes), vis_img)
+                if self.kps_color_type == "COCO":
+                    self.KPV.visualize(vis_img, kps, kps_scores)
+                else:
+                    self.KPV.visualize(vis_img, ids, kps, kps_scores)
             else:
-                self.KPV.visualize(vis_img, ids, kps, kps_scores)
+                for i, (id, box, box_cls, kp, kp_score) in enumerate(zip(ids, boxes, boxes_cls, kps, kps_scores)):
+                    color = self.colors[int(id.tolist())]
+                    if self.bg_type == "raw":
+                        self.BBV.visualize([box], vis_img, [box_cls], color)
+                        self.IDV.plot_bbox_id({id: box}, vis_img, color=(color, color))
+                        self.KPV.visualize(vis_img,  kp.unsqueeze(dim=0), kp_score.unsqueeze(dim=0), color=color)
         return vis_img
 
     def get_labels(self):
@@ -57,34 +69,36 @@ class BBoxVisualizer:
         self.label_color = (0, 0, 255)
         self.labels = []
 
-    def visualize(self, bboxes, img, boxes_cls=[]):
+    def visualize(self, bboxes, img, boxes_cls=[], color=[]):
+        box_color = self.box_color if not color else color
+        label_color = self.label_color if not color else color
         self.labels = []
         for idx, bbox in enumerate(bboxes):
-            img = cv2.rectangle(img, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), self.box_color, 4)
+            img = cv2.rectangle(img, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), box_color, 4)
             if len(self.cls_names) > 0 and len(boxes_cls) > 0:
                 if self.cls_names:
                     curr_label = self.cls_names[int(boxes_cls[idx])]
                     self.labels.append(curr_label)
                 img = cv2.putText(img, curr_label, (int(bbox[0]), int(bbox[1])),
-                                  cv2.FONT_HERSHEY_PLAIN, 2, self.label_color, 2)
+                                  cv2.FONT_HERSHEY_PLAIN, 2, label_color, 2)
 
 
 class IDVisualizer(object):
     def __init__(self):
         pass
 
-    def plot_bbox_id(self, id2bbox, img, color=("gold", "red"), id_pos="down", with_bbox=False):
+    def plot_bbox_id(self, id2bbox, img, color=((255, 0, 0), (0, 0, 255)), id_pos="down", with_bbox=False):
         for idx, box in id2bbox.items():
             idx = int(idx)
             [x1, y1, x2, y2] = box
             if id_pos == "up":
                 cv2.putText(img, "id{}".format(idx), (int((x1 + x2)/2), int(y1)), cv2.FONT_HERSHEY_PLAIN, 4,
-                            (255, 0, 0), 4)
+                            color[0], 4)
             else:
                 cv2.putText(img, "id{}".format(idx), (int((x1 + x2)/2), int(y2)), cv2.FONT_HERSHEY_PLAIN, 4,
-                            (255, 0, 0), 4)
+                            color[0], 4)
             if with_bbox:
-                img = cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), (0, 0, 255), 4)
+                img = cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), color[1], 4)
 
 
     # def plot_skeleton_id(self, id2ske, img):
@@ -177,7 +191,7 @@ class KeyPointVisualizer:
             thresh = torch.Tensor(thresh)
         return thresh
 
-    def visualize(self, frame, kps, kps_confs=[]):
+    def visualize(self, frame, kps, kps_confs=[], color=()):
         kps = torch.Tensor(kps)
         if len(kps_confs) <= 0:
             kps_confs = torch.Tensor([[[1 for _ in range(kps.shape[0])] for j in range(kps.shape[1])]])
@@ -207,13 +221,15 @@ class KeyPointVisualizer:
                     continue
 
                 part_line[n] = (cor_x, cor_y)
-                cv2.circle(frame, (cor_x, cor_y), 4, self.p_color[n], -1)
+                p_color = self.p_color[n] if not color else color
+                cv2.circle(frame, (cor_x, cor_y), 4, p_color, -1)
             # Draw limbs
             for i, (start_p, end_p) in enumerate(self.l_pair):
                 if start_p in part_line and end_p in part_line:
                     start_xy = part_line[start_p]
                     end_xy = part_line[end_p]
-                    cv2.line(frame, start_xy, end_xy, self.line_color[i], 8)
+                    line_color = self.line_color[i] if not color else color
+                    cv2.line(frame, start_xy, end_xy, line_color, 8)
 
 
 class KeyPointVisualizerID:
