@@ -46,7 +46,8 @@ class Tracker:
         self.kf = kalman_filter.KalmanFilter()
         self.tracks = []
         self._next_id = 1
-
+        self.frame = 1
+        self.lost_people = []
     def predict(self):
         """Propagate track state distributions one time step forward.
 
@@ -102,38 +103,60 @@ class Tracker:
                 detection_indices)
 
             return cost_matrix
+        def metric_feature(tracks, dets, track_indices, detection_indices):
+            features = np.array([dets[i].feature for i in detection_indices])
+            targets = np.array([tracks[i].track_id for i in track_indices])
+            cost_matrix = self.metric.distance(features, targets)
+
+            return cost_matrix
+
 
         # Split track set into confirmed and unconfirmed tracks.
         confirmed_tracks = [
             i for i, t in enumerate(self.tracks) if t.is_confirmed()]
         unconfirmed_tracks = [
             i for i, t in enumerate(self.tracks) if not t.is_confirmed()]
-
+        if len(self.lost_people) == 0:
+            self.frame += 1
         # Associate confirmed tracks using appearance features.
-        matches_a, unmatched_tracks_a, unmatched_detections = \
-            linear_assignment.matching_cascade(
-                gated_metric, self.metric.matching_threshold, self.max_age,
-                self.tracks, detections, confirmed_tracks)
+            matches_a, unmatched_tracks_a, unmatched_detections = \
+                linear_assignment.matching_cascade(
+                    gated_metric, self.metric.matching_threshold, self.max_age,
+                    self.tracks, detections, confirmed_tracks)
 
         # Associate remaining tracks together with unconfirmed tracks using IOU.
-        iou_track_candidates = unconfirmed_tracks + [
-            k for k in unmatched_tracks_a if
-            self.tracks[k].time_since_update == 1]
-        unmatched_tracks_a = [
-            k for k in unmatched_tracks_a if
-            self.tracks[k].time_since_update != 1]
-        matches_b, unmatched_tracks_b, unmatched_detections = \
-            linear_assignment.min_cost_matching(
-                iou_matching.iou_cost, self.max_iou_distance, self.tracks,
-                detections, iou_track_candidates, unmatched_detections)
+            iou_track_candidates = unconfirmed_tracks + [
+                k for k in unmatched_tracks_a if
+                self.tracks[k].time_since_update == 1]
+            unmatched_tracks_a = [
+                k for k in unmatched_tracks_a if
+                self.tracks[k].time_since_update != 1]
+            matches_b, unmatched_tracks_b, unmatched_detections = \
+                linear_assignment.min_cost_matching(
+                    iou_matching.iou_cost, self.max_iou_distance, self.tracks,
+                    detections, iou_track_candidates, unmatched_detections)
 
-        matches = matches_a + matches_b
-        unmatched_tracks = list(set(unmatched_tracks_a + unmatched_tracks_b))
+            matches = matches_a + matches_b
+            unmatched_tracks = list(set(unmatched_tracks_a + unmatched_tracks_b))
+            self.lost_people = unmatched_tracks
+        elif len(self.lost_people) != 0:
+            self.frame += 1
+            # Associate confirmed tracks using appearance features.
+            print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+            matches_c, unmatched_tracks_c, unmatched_detections = \
+                linear_assignment.matching_cascade(
+                    metric_feature, self.metric.matching_threshold, self.max_age,
+                    self.tracks, detections, confirmed_tracks)
+
+            matches = matches_c
+            unmatched_tracks = list(set(unmatched_tracks_c))
+            self.lost_people = unmatched_tracks
         return matches, unmatched_tracks, unmatched_detections
 
     def _initiate_track(self, detection):
         mean, covariance = self.kf.initiate(detection.to_xyah())
-        self.tracks.append(Track(
-            mean, covariance, self._next_id, self.n_init, self.max_age,
-            detection.feature))
-        self._next_id += 1
+        if len(self.tracks) < 4:
+            self.tracks.append(Track(
+                mean, covariance, self._next_id, self.n_init, self.max_age,
+                detection.feature))
+            self._next_id += 1
