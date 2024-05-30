@@ -7,17 +7,17 @@ import sys
 # Check the image storage of label-studio at
 # cd .local/share/label-studio/media/upload
 # get "project_id" of where you import the images for running of this script.
-# run script: 
+# run script:
 # python create_json.py project_id label-studio-concise.json
 # e.g. python create_json.py 2 /full/path/result_project_15.json
 
 # Get the path to the user's home directory
-home_dir = os.path.expanduser("~")
-output_folder = "/media/hkuit164/WD20EJRX/ESTRNN_dataset/project-12-at-2024-05-29-13-29-b55e702c/json"
+# home_dir = os.path.expanduser("~")
+output_folder = ""
 os.makedirs(output_folder, exist_ok=True)
 
 # Image input folder path
-storage = os.path.join(home_dir, ".local/share/label-studio/media/upload")
+storage = r"C:\Users\hkuit\AppData\Local\label-studio\label-studio\media\upload"
 # project number
 project_number = sys.argv[1]
 storage = os.path.join(storage, project_number)
@@ -46,7 +46,7 @@ for filename in os.listdir(storage):
                 image_id = image["id"]
                 height = image["height"]
                 width = image["width"]
-                
+
         # generate label-studio import structure.
         data = {
             "data": {
@@ -57,11 +57,11 @@ for filename in os.listdir(storage):
             }]
         }
 
-        # 
+        #
         for anno in source_json["annotations"]:
             # get every annotation of the same image.
             if anno["image_id"] == image_id:
-    
+
                 rectangle = {
                     "original_width": width,
                     "original_height": height,
