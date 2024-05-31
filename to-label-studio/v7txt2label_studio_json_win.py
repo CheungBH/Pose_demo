@@ -44,7 +44,7 @@ for filename in os.listdir(storage):
     if filename.endswith((".jpg")):
 
         # Image file path
-        image_path = os.path.join("/data/upload", project_number, filename)
+        image_path = os.path.join("\\data\\upload", project_number, filename)
 
         # Extract the desired part of the filename
         # Label-studio add randomly generated prefix that ends with "-"
