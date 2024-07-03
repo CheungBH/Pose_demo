@@ -21,6 +21,12 @@ json_path = args.JsonPath
 train_ratio = args.TrainRatio
 output_train_json = args.OutputTrainJson
 output_val_json = args.OutputValJson
+FolderPath = args.InputFolder
+OutputTrainPath = args.OutputTrainFolder
+OutputValPath = args.OutputValFolder
+os.makedirs(OutputValPath, exist_ok=True)
+os.makedirs(OutputTrainPath, exist_ok=True)
+
 
 with open(json_path, "r") as json_file:
     data = json.load(json_file)
@@ -80,9 +86,6 @@ with open(output_train_json, "w") as train_file:
 with open(output_val_json, "w") as val_file:
     json.dump(val_json, val_file, indent=4)
 
-FolderPath = args.InputFolder
-OutputTrainPath = args.OutputTrainFolder
-OutputValPath = args.OutputValFolder
 
 JsonTrain = open(output_train_json, "r")
 DataTrain = json.load(JsonTrain)

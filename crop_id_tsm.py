@@ -29,6 +29,55 @@ class FrameProcessor:
                                 sort_type, deepsort_weight, device,  debug=False)
         self.bbox_dict = {}
 
+    # def process_video_folder(self, video_folder, output_folder, frame_interval):
+    #     for video_file in os.listdir(video_folder):
+    #         video_path = os.path.join(video_folder, video_file)
+    #         if not os.path.isfile(video_path):
+    #             continue
+    #
+    #         cap = cv2.VideoCapture(video_path)
+    #         video_name = os.path.splitext(video_file)[0]
+    #         video_output_folder = os.path.join(output_folder, video_name)
+    #         os.makedirs(video_output_folder, exist_ok=True)
+    #         frame_num = 0
+    #
+    #         while True:
+    #             ret, frame = cap.read()
+    #             if not ret:
+    #                 break
+    #
+    #             if frame_num % frame_interval == 0:
+    #                 ids, boxes, det_cls, kps, kps_scores = self.HP.process(frame, print_time=True)
+    #                 ids = ids.tolist()
+    #                 for i in range(len(ids)):
+    #                     person_id = ids[i]
+    #                     bbox = boxes[i]
+    #                     x_min, y_min, x_max, y_max = int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])
+    #                     if person_id in self.bbox_dict:
+    #                         prev_x_min, prev_y_min, prev_x_max, prev_y_max = self.bbox_dict[person_id]
+    #
+    #                         if (x_min > prev_x_max or x_max < prev_x_min or y_min > prev_y_max or y_max < prev_y_min):
+    #                             self.bbox_dict[person_id] = (x_min, y_min, x_max, y_max)
+    #                     else:
+    #                         self.bbox_dict[person_id] = (x_min, y_min, x_max, y_max)
+    #
+    #                     x_min, y_min, x_max, y_max = self.bbox_dict[person_id]
+    #
+    #                     person_folder = os.path.join(video_output_folder, f"person_{int(person_id)}")
+    #                     os.makedirs(person_folder, exist_ok=True)
+    #                     output_filename = f"{video_name}_frame_{frame_num}_person_{int(person_id)}.jpg"
+    #                     output_path = os.path.join(person_folder, output_filename)
+    #
+    #                     cropped_img = frame[y_min:y_max, x_min:x_max]
+    #                     cv2.imwrite(output_path, cropped_img)
+    #             frame_num += 1
+    #         cap.release()
+    #     print("Video frames cropped and saved successfully.")
+
+    #
+        self.current_bbox = None
+        self.frame_count = 0
+
     def process_video_folder(self, video_folder, output_folder, frame_interval):
         for video_file in os.listdir(video_folder):
             video_path = os.path.join(video_folder, video_file)
@@ -38,38 +87,63 @@ class FrameProcessor:
             cap = cv2.VideoCapture(video_path)
             video_name = os.path.splitext(video_file)[0]
             video_output_folder = os.path.join(output_folder, video_name)
+            # width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            # height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             os.makedirs(video_output_folder, exist_ok=True)
             frame_num = 0
+            crop_img_buffer = []
 
             while True:
                 ret, frame = cap.read()
                 if not ret:
                     break
 
+                self.frame_count += 1
+
                 if frame_num % frame_interval == 0:
                     ids, boxes, det_cls, kps, kps_scores = self.HP.process(frame, print_time=True)
-                    ids = ids.tolist()
                     for i in range(len(ids)):
                         person_id = ids[i]
                         bbox = boxes[i]
                         x_min, y_min, x_max, y_max = int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])
-                        if person_id in self.bbox_dict:
-                            prev_x_min, prev_y_min, prev_x_max, prev_y_max = self.bbox_dict[person_id]
 
-                            if (x_min > prev_x_max or x_max < prev_x_min or y_min > prev_y_max or y_max < prev_y_min):
-                                self.bbox_dict[person_id] = (x_min, y_min, x_max, y_max)
-                        else:
-                            self.bbox_dict[person_id] = (x_min, y_min, x_max, y_max)
+                        if person_id not in self.bbox_dict:
+                            self.bbox_dict[person_id] = []
 
-                        x_min, y_min, x_max, y_max = self.bbox_dict[person_id]
+                        self.bbox_dict[person_id].append((x_min, y_min, x_max, y_max))
 
+                        # Only keep the latest 8 frames
+                        if len(self.bbox_dict[person_id]) > 8:
+                            self.bbox_dict[person_id].pop(0)
+
+                    # Update bounding box every 8 frames
+                    if self.frame_count % 8 == 0:
+                        all_x_min = min(b[0] for boxes in self.bbox_dict.values() for b in boxes)
+                        all_y_min = min(b[1] for boxes in self.bbox_dict.values() for b in boxes)
+                        all_x_max = max(b[2] for boxes in self.bbox_dict.values() for b in boxes)
+                        all_y_max = max(b[3] for boxes in self.bbox_dict.values() for b in boxes)
+
+                        self.current_bbox = (all_x_min, all_y_min, all_x_max, all_y_max)
+
+                if self.current_bbox:
+                    x_min, y_min, x_max, y_max = self.current_bbox
+
+                    for person_id in ids:
                         person_folder = os.path.join(video_output_folder, f"person_{int(person_id)}")
                         os.makedirs(person_folder, exist_ok=True)
                         output_filename = f"{video_name}_frame_{frame_num}_person_{int(person_id)}.jpg"
                         output_path = os.path.join(person_folder, output_filename)
 
                         cropped_img = frame[y_min:y_max, x_min:x_max]
-                        cv2.imwrite(output_path, cropped_img)
+                        crop_img_buffer.append((cropped_img, person_folder, output_filename))
+
+                        # Save every 8 frames
+                        if len(crop_img_buffer) == 8:
+                            for img, folder, filename in crop_img_buffer:
+                                output_path = os.path.join(folder, filename)
+                                cv2.imwrite(output_path, img)
+                            crop_img_buffer = []
+
                 frame_num += 1
             cap.release()
         print("Video frames cropped and saved successfully.")

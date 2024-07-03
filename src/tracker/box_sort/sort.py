@@ -47,6 +47,7 @@ def convert_bbox_to_z(bbox):
     [x,y,s,r] where x,y is the centre of the box and s is the scale/area and r is
     the aspect ratio
   """
+  bbox = bbox.cpu().numpy()
   w = bbox[2]-bbox[0]
   h = bbox[3]-bbox[1]
   x = bbox[0]+w/2.

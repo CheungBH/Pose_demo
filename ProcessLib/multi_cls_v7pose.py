@@ -1,15 +1,15 @@
 import os
 
-label_studio_txt_file = ""
-v7pose_txt_file = ""
-output_txt_file = ""
+label_studio_txt_file = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0628/YOLOv7_trainable"
+v7pose_txt_file = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/pose_sources/pose_sources_0628/YOLOv7ps_trainable/labels"
+output_txt_file = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/pose_cls_sources"
 
 os.makedirs(f"{output_txt_file}/train", exist_ok=True)
 os.makedirs(f"{output_txt_file}/val", exist_ok=True)
 
 
 def list_files_in_directory(directory_path):
-    file_names = []
+    file_names = []()
     for file in os.listdir(directory_path):
         if os.path.isfile(os.path.join(directory_path, file)):
             file_names.append(file)

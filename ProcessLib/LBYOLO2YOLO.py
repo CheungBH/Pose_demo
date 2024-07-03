@@ -110,9 +110,9 @@ def yolov7_format_change(input_folder, split, data_folder):
     os.remove(os.path.join(input_folder, "classes.txt"))
 
 
-label_studio_yolo = '/media/hkuit164/Backup/xjl/hh_video_data/cut_video_selected/label_studio/cor/yolo/project-43-at-2023-11-15-02-23-5e2ecdf3'
-output_yolo = '/media/hkuit164/Backup/xjl/hh_video_data/cut_video_selected/label_studio/cor/yolo/yolov7_4cls_cor'
-data_name = "yolov7_4cls_cor"
+label_studio_yolo = '/media/hkuit164/WD20EJRX/Aiden/hksi/HKSI/YOLOv7_process/YOLO_ouput'
+output_yolo = '/media/hkuit164/WD20EJRX/Aiden/hksi/HKSI/YOLOv7_process/YOLO_trainable'
+data_name = "YOLO_trainable"
 data_split = True
 yolov7 = True
 

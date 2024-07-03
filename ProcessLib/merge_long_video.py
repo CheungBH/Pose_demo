@@ -6,10 +6,13 @@ import os
 # video_paths = ["{}/{}".format(videos_folder, video) for video in os.listdir(videos_folder)]
 
 # If using a list of video paths
-video_paths = ["../demo_assets/cut_xjl_wheelchair.mov", "../demo_assets/cut_xjl_fall.mp4"]
+video_paths = ["/media/hkuit164/WD20EJRX/ESTRNN_dataset/Tennis_demo/AI_model_advanced/ocr_score/20240131_xzy_test_yt_2_score.mp4",
+               "/media/hkuit164/WD20EJRX/ESTRNN_dataset/Tennis_demo/AI_model_advanced/ocr_score/20240131_xzy_test_yt_3_score.mp4",
+               "/media/hkuit164/WD20EJRX/ESTRNN_dataset/Tennis_demo/AI_model_advanced/ocr_score/20240131_xzy_test_yt_4_score.mp4"
+               ]
 
 
-output_path = "merged_video.mp4"
+output_path = "/media/hkuit164/WD20EJRX/ESTRNN_dataset/Tennis_demo/AI_model_advanced/ocr_score.mp4"
 video_streams = [cv2.VideoCapture(path) for path in video_paths]
 print("Total videos to merge: ", len(video_paths))
 

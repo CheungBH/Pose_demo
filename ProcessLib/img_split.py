@@ -11,7 +11,7 @@ def split_folder(folder_path, num_parts):
         output_folders.append(output_folder)
 
     # Get a list of all image files in the input folder
-    image_files = [file for file in os.listdir(folder_path) if file.endswith(('.jpg', '.jpeg', '.png'))]
+    image_files = [file for file in os.listdir(folder_path)]# if file.endswith(('.jpg', '.jpeg', '.png'))]
 
     # Shuffle the image files randomly
     random.shuffle(image_files)
@@ -42,6 +42,6 @@ def split_folder(folder_path, num_parts):
     print("Splitting folder completed successfully.")
 
 # Usage example
-folder_path = "/media/hkuit164/Backup/2324_data/0208_high/rgb/images"
-num_parts = 8
+folder_path = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0628/image_merge_cls_total/zhy_images"
+num_parts = 5
 split_folder(folder_path, num_parts)

@@ -13,7 +13,7 @@ import sys
 
 # Get the path to the user's home directory
 home_dir = os.path.expanduser("~")
-output_folder = "/media/hkuit164/WD20EJRX/ESTRNN_dataset/relabel/project-12-at-2024-05-29-13-47-16989547/json2"
+output_folder = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0628/relabel_cls_json"
 os.makedirs(output_folder, exist_ok=True)
 
 # Image input folder path
@@ -22,15 +22,15 @@ storage = os.path.join(home_dir, ".local/share/label-studio/media/upload")
 project_number = sys.argv[1]
 storage = os.path.join(storage, project_number)
 
-relabel_dict = {"forehand": "left",
-                "backhand": "left"}
+# relabel_dict = {"Overhead": "overhead"}
 
 with open(sys.argv[2], "r") as f:
     source_json = json.load(f)
 
-categories = {}
-for i in source_json["categories"]:
-    categories[i["id"]] = i["name"]
+# categories = {}
+categories = source_json["categories"]
+# for i in source_json["categories"]:
+#     categories[i["id"]] = i["name"]
 
 # Loop through the images in the folder
 for filename in os.listdir(storage):
@@ -69,7 +69,8 @@ for filename in os.listdir(storage):
         # 
         for anno in source_json["annotations"]:
             cls = categories[anno["category_id"]]
-            updated_label = relabel_dict[cls] if cls in relabel_dict else cls
+
+            # updated_label = relabel_dict[cls] if cls in relabel_dict else cls
             # get every annotation of the same image.
             if anno["image_id"] == image_id:
     
@@ -88,7 +89,8 @@ for filename in os.listdir(storage):
                         "rotation": 0,
                         # dummy labels that will be change using label-studio.
                         "rectanglelabels": [
-                            updated_label
+                            # updated_label
+                            cls['name']
                         ]
                     },
                     "id": anno["id"],

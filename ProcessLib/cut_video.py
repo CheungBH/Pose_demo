@@ -33,5 +33,5 @@ def cutVideo2Frame(path, interval):
 if __name__ == '__main__':
     args = parse_args()
     folderPath = args.folder
-    cutVideo2Frame(folderPath, 1)
+    cutVideo2Frame(folderPath, 3)
     

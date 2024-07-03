@@ -8,9 +8,10 @@ import numpy as np
 
 parser = argparse.ArgumentParser(description='Test yolo data.')
 parser.add_argument('-j', help='JSON file', dest='json', required=True)
+parser.add_argument('-img', help='path to image folder',required=True)
+
 parser.add_argument('-o', help='path to output folder', dest='out',required=True)
 parser.add_argument('-mode', help='train dataset &validation dataset', required=True, type=str)
-parser.add_argument('-img', help='path to image folder',required=True)
 
 args = parser.parse_args()
 
@@ -137,7 +138,6 @@ class COCO2YOLO:
                 f = open(os.path.join(output, file_name), 'a+', encoding='utf-8')
                 print(k, v)
                 box = ['{:.6f}'.format(x) for x in obj[2]]
-                box = ' '.join(box)
                 line = str(category_id) + ' ' + box
                 f.write(line + '\n')
             if mode == "train":

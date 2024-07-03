@@ -1,9 +1,9 @@
 import os
 import shutil
 
-yolov3_path = '/media/hkuit164/Backup/Yolov3Pruning/data/Data_0_yolo'
-yolov7_path = '/media/hkuit164/Backup/yolov7/datasets/ball_detection'
-data_name = "ball_detection"
+yolov3_path = '/media/hkuit164/WD20EJRX/dayyolo'
+yolov7_path = '/media/hkuit164/WD20EJRX/dayyolo_1'
+data_name = "dayyolo_1"
 
 
 def copy_files_to_new_folder(source_folder, destination_folder):

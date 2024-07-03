@@ -6,7 +6,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='RtspDataCollection')
     # general
     parser.add_argument('--JsonFolder',
-                        help="json waiting for being meraged",
+                        help="json waiting for being merged",
                         required=True,
                         type=str)
     args = parser.parse_args()
@@ -15,14 +15,14 @@ def parse_args():
 args = parse_args()
 
 MeragePath = args.JsonFolder
-OutputJson = os.path.join(MeragePath, "MeagedCoco.json")
+OutputJson = os.path.join(MeragePath, "MergedCoco.json")
 
 MerageFolders = sorted(os.listdir(MeragePath))
 
 DataList = []
 for Obj in MerageFolders:
     if Obj[0] == ".":
-    	continue
+        continue
     JsonPath = os.path.join(MeragePath,Obj)
     JsonObj = open(JsonPath, "r")
     Data = json.load(JsonObj)
@@ -43,6 +43,8 @@ for index, JsonData in enumerate(DataList):
     images = []
     for Image in JsonData["images"]:
         image = {}
+        split_list = Image["file_name"].split('-')
+        Image["file_name"] = split_list[-1]
         image["file_name"] = Image["file_name"]
         image["id"] = Image["id"] + ImageIdCounter
         image["height"] = Image["height"]

@@ -13,7 +13,7 @@ import sys
 
 # Get the path to the user's home directory
 home_dir = os.path.expanduser("~")
-output_folder = "/media/hkuit164/WD20EJRX/ESTRNN_dataset/project-12-at-2024-05-29-13-29-b55e702c/json"
+output_folder = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/datasets/xzy/cls_det/cls_dataset_1/cls.json"
 os.makedirs(output_folder, exist_ok=True)
 
 # Image input folder path

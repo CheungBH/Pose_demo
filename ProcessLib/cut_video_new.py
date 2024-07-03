@@ -1,8 +1,8 @@
 import os
 import cv2
 
-input_folder = "/media/hkuit164/Backup/xjl/hh_video_data/cut_video_selected/fight_video"
-output_folder = "/media/hkuit164/Backup/xjl/hh_video_data/cut_video_selected/fight_video"
+input_folder = "/media/hkuit164/WD20EJRX/Aiden/hksi/HKSI/self_dataset/self_practice/self_practice_video"
+output_folder = "/media/hkuit164/WD20EJRX/Aiden/hksi/HKSI/self_dataset/self_practice/self_practice_frame"
 cut_frame = 10
 
 os.makedirs(output_folder, exist_ok=True)

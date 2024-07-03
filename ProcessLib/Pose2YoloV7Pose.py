@@ -107,9 +107,9 @@ def pose_to_yolov7pose(input_folder, data_folder):
         coco.write(f"\ntrain: ./datasets/{data_folder}/train.txt\nval: ./datasets/{data_folder}/val.txt\nnc: {cls}\nnames: ['person']")
 
 
-pose_folder = "/media/hkuit164/Backup/xjl/hh_video_data/cut_video_selected/label_studio_concise/act/pose1"
-yolov7pose_folder = "/media/hkuit164/Backup/xjl/hh_video_data/cut_video_selected/label_studio_concise/act/yolov7_pose_act_new"
-data_name = "yolov7_pose_act_new"
+pose_folder = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/pose_sources/pose_sources_0628/pose_trainable_total"
+yolov7pose_folder = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/pose_sources/pose_sources_0628/YOLOv7ps_trainable"
+data_name = "YOLOv7ps_trainable"
 
 copy_files_to_new_folder(pose_folder, yolov7pose_folder)
 pose_to_yolov7pose(yolov7pose_folder, data_name)
