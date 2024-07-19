@@ -1,6 +1,8 @@
 import os
 import json
 import argparse
+import traceback
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description='RtspDataCollection')
@@ -23,12 +25,13 @@ def parse_args():
 args = parse_args()
 JsonPath = args.JsonFile
 ImagePath = args.ImageFolder
-print(args.DelMissImage)
-
-JsonObj = open(JsonPath, "r")
-JsonData = json.load(JsonObj)
+print("Whether del miss image json or not: ", args.DelMissImage)
+if os.path.exists(JsonPath):
+    JsonObj = open(JsonPath, "r")
+    JsonData = json.load(JsonObj)
 
 ImageList = os.listdir(ImagePath)
+JsonList = []
 
 def check_json_image(JsonData, ImageList):
     miss_image = []
@@ -43,6 +46,7 @@ def check_json_image(JsonData, ImageList):
                 # print("del: ", fileName)
                 continue
         else:
+            JsonList.append(fileName)
             continue
     for annotation in JsonData["annotations"]:
         if annotation["image_id"] in del_id:
@@ -53,6 +57,11 @@ def check_json_image(JsonData, ImageList):
     return miss_image, del_id
 
 missList, delList= check_json_image(JsonData, ImageList)
+# print("Image list: ", ImageList)
+print("length of Image list: ", len(ImageList))
+print("length of Json list: ", len(JsonList))
+print("diff: ", set(ImageList).difference(set(JsonList)))
+
 print("Image miss: ", missList)
 print("delete id: ", delList)
 print("Miss number: ", len(missList))

@@ -65,6 +65,8 @@ def regulate_category(name):
         "Waiting": 3,
         "others": 3,
         "Others": 3,
+        "other": 3,
+        "Other": 3
     }
     return name_to_id.get(name)
 

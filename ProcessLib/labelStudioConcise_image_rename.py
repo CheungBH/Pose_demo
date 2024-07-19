@@ -2,7 +2,7 @@ import os
 from tqdm import tqdm
 import time
 
-folder_path = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0628/image_merge_cls_total/total_merge_images"
+folder_path = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0710/images/total_images"
 
 print("------------------------------start rename-----------------------------")
 try:

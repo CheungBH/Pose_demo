@@ -1,9 +1,9 @@
 import os
 import cv2
 
-input_folder = "/media/hkuit164/WD20EJRX/Aiden/hksi/HKSI/self_dataset/self_practice/self_practice_video"
-output_folder = "/media/hkuit164/WD20EJRX/Aiden/hksi/HKSI/self_dataset/self_practice/self_practice_frame"
-cut_frame = 10
+input_folder = "/media/hkuit164/WD20EJRX/Aiden/hksi/raw_material/New folder_3"
+output_folder = "/media/hkuit164/WD20EJRX/Aiden/hksi/HKSI/datasets/practice_2"
+cut_frame = 20
 
 os.makedirs(output_folder, exist_ok=True)
 

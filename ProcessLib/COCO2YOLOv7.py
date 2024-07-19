@@ -57,7 +57,7 @@ def convert_coco_to_yolo(coco_annotation_file, output_dir, img_dir):
 
 
 if __name__ == '__main__':
-    coco_annotation_file = '/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0628/total_cls_json/MergedClsCoco_cls.json'
-    output_dir = '/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0628/YOLOv7_trainable'
-    img_dir = '/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0628/image_merge_cls_total/total_merge_images'
+    coco_annotation_file = '/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/pose_sources/pose_sources_0710/label_studio_concise/MergedCoco.json'
+    output_dir = '/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/pose_sources/pose_sources_0710/YOLOv7_trainable'
+    img_dir = '/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/pose_sources/pose_sources_0710/images/total_images'
     convert_coco_to_yolo(coco_annotation_file, output_dir, img_dir)

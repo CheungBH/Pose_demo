@@ -12,7 +12,7 @@ def moveFile(fileDir):
 
         #按照rate比例从文件夹中取一定数量图片
         # pick_number = int(file_number * rate)
-        pick_number = 100
+        pick_number = 200
 
         #随机选取picknumber数量的样本图片
         sample = random.sample(pathDir, pick_number)
@@ -24,9 +24,9 @@ def moveFile(fileDir):
 
 if __name__ == '__main__':
     #源图片文件夹路径
-    fileDir = "/media/hkuit164/WD20EJRX/Aiden/hksi/HKSI/practice_dataset/practice_total_frame"
+    fileDir = "/media/hkuit164/WD20EJRX/Aiden/hksi/HKSI/datasets/practice_2/cut_frame/total_images"
     #移动到新的文件夹路径
-    tarDir = '/media/hkuit164/WD20EJRX/Aiden/hksi/HKSI/selec_frame'
+    tarDir = '/media/hkuit164/WD20EJRX/Aiden/hksi/HKSI/datasets/practice_2/selec_frame/auto_selec'
     moveFile(fileDir)
 
 

@@ -42,6 +42,6 @@ def split_folder(folder_path, num_parts):
     print("Splitting folder completed successfully.")
 
 # Usage example
-folder_path = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0628/image_merge_cls_total/zhy_images"
-num_parts = 5
+folder_path = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0710/images/total_images"
+num_parts = 16
 split_folder(folder_path, num_parts)
