@@ -110,8 +110,8 @@ def yolov7_format_change(input_folder, split, data_folder):
     os.remove(os.path.join(input_folder, "classes.txt"))
 
 
-label_studio_yolo = '/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0710/YOLOv7_output'
-output_yolo = '/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0710/YOLO_trainable'
+label_studio_yolo = '/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/4cls_lr_0725/YOLO_output'
+output_yolo = '/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/4cls_lr_0725/YOLO_trainable'
 data_name = "YOLO_trainable"
 data_split = True
 yolov7 = True

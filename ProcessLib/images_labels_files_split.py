@@ -7,17 +7,17 @@ import shutil
 """
 中文简介：
 1. 该程序可以选择按数量分割文件
-2. 该程序可以处理训练数据集，例如现在有total的图片和total的labels，可以进行处理使得按比例生成images/train, images/val和labels/train, labels/val
+2. (部分条件下有ｂｕｇ，建议用LBYOLO2YOLO)该程序可以处理训练数据集，例如现在有total的图片和total的labels，可以进行处理使得按比例生成images/train, images/val和labels/train, labels/val
 3. 可以选择两个文件夹进行比对，检查labels和images是否对应
 """
 
 # Folder address where the original file is stored
 # total txt file path
-total_labels_path = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0710/relabel_json/relabel_cls_json"
-target_floder_path = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0710/relabel_json/relabel_split_json"
+total_labels_path = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/6cls_lr_0725/YOLO_output/labels"
+target_floder_path = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/6cls_lr_0725/6cls_lr_trainable"
 
 # total image file path
-total_imamges_path = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0710/images/total_images"
+total_imamges_path = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/6cls_lr_0725/YOLO_output/images"
 
 
 
@@ -101,8 +101,8 @@ def images_split_proportion(total_imamges_path, target_floder_path, train, val, 
 
 def check_image_label():
     # Select the two folders you want to check.
-    imageName = os.listdir("/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/pose_cls_sources/pose_cls_0718/labels/train")
-    labelName = os.listdir("/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/pose_cls_sources/pose_cls_0718/new_images/train")
+    imageName = os.listdir("/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0710/total_images/total_images")
+    labelName = os.listdir("/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/6cls_lr_0725/TENNIS_6CLS")
     image_compare = []
     label_compare = []
     for image in imageName:

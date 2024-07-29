@@ -1,9 +1,9 @@
 import os
 import numpy as np
 
-label_studio_txt_file = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0710/YOLOv7_output/labels"
+label_studio_txt_file = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/6cls_lr_0725/YOLO_output/labels"
 v7pose_txt_file = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/pose_sources/pose_sources_0710/YOLOv7ps_trainable/labels"
-output_txt_file = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/pose_cls_sources"
+output_txt_file = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/pose_cls_sources/pose_6cls_lr_0726"
 
 os.makedirs(f"{output_txt_file}/train", exist_ok=True)
 os.makedirs(f"{output_txt_file}/val", exist_ok=True)

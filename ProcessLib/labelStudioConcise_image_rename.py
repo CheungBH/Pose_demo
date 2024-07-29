@@ -2,7 +2,7 @@ import os
 from tqdm import tqdm
 import time
 
-folder_path = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/cls_sources/cls_sources_0710/images/total_images"
+folder_path = "/media/hkuit164/WD20EJRX/Aiden/Tennis_dataset/datasets/Li_Yufangfei/6cls_left_right/project-139-at-2024-07-25-02-12-006b9840/labels"
 
 print("------------------------------start rename-----------------------------")
 try:
