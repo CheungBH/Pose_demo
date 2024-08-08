@@ -9,6 +9,7 @@ from .yolo_pose.detect import YoloPose
 from .tracker.tracker import PersonTracker
 from .classifier.classifier import EnsembleClassifier
 from .pose3d.pose3d_lifter import Pose3dLifter
+from .tracker_match import reorder_tracking_boxes
 tensor = torch.Tensor
 
 from .tracker.visualize import plot_id_box
@@ -40,6 +41,9 @@ class HumanDetector:
             if print_time:
                 curr_time = time.time()
             self.boxes, self.kps, self.kps_scores = self.pose_det.process(frame)
+            if self.boxes == []:
+                return self.ids, self.boxes, self.dets_cls, self.kps, self.kps_scores
+            pre_box = self.boxes.tolist()
             if hasattr(self, "pose3d"):
                 self.kps_3d = self.pose3d.process(self.kps)
                 if print_time:
@@ -52,9 +56,11 @@ class HumanDetector:
                 print("Detector uses: {}s".format(round((time.time() - curr_time), 4)))
                 curr_time = time.time()
             if len(self.boxes) > 0:
-                self.dets_cls = self.boxes[:,-1]
-                self.ids, self.boxes = self.tracker.update(self.boxes, copy.deepcopy(frame))
-
+                self.dets_cls = self.boxes[:, -1]
+                self.ids, self.boxes = self.tracker.update(self.boxes.cpu(), copy.deepcopy(frame))
+                tracking_box = [arr.tolist() for arr in self.boxes]
+                self.boxes, self.ids = reorder_tracking_boxes(pre_box, tracking_box, self.ids)
+                self.boxes = [np.array(sublist) for sublist in self.boxes]
                 if print_time:
                     print("Tracker uses: {}s".format(round((time.time() - curr_time), 4)))
                     curr_time = time.time()
@@ -88,6 +94,7 @@ class HumanDetector:
 
     def convert_result_to_tensor(self):
         self.ids = tensor(self.ids)
+        print(self.boxes)
         self.boxes = tensor(self.boxes)
 
     def debug_for_tracking(self, frame):
@@ -110,6 +117,7 @@ class HumanDetector:
 
     def init_trackers(self):
         self.tracker = PersonTracker("sort")
+
 
 
 if __name__ == '__main__':

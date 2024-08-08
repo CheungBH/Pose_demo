@@ -46,10 +46,14 @@ class Visualizer:
                     self.KPV.visualize(vis_img,  kp.unsqueeze(dim=0), kp_score.unsqueeze(dim=0), color=color)
             else: # by label
                 for i, (id, box, box_cls, kp, kp_score) in enumerate(zip(ids, boxes, boxes_cls, kps, kps_scores)):
-                    color = self.colors[int(box_cls.tolist())]
+                    try:
+                        color = self.colors[int(box_cls.tolist())]
+                    except:
+                        color = self.colors[int(box_cls)]
+
                     self.BBV.visualize([box], vis_img, [box_cls], color)
                     self.IDV.plot_bbox_id({id: box}, vis_img, color=(color, color))
-                    self.KPV.visualize(vis_img, kp.unsqueeze(dim=0), kp_score.unsqueeze(dim=0), color=color)
+                    self.KPV.visualize(vis_img, kp.unsqueeze(dim=0).cpu(), kp_score.unsqueeze(dim=0).cpu(), color=color)
         return vis_img
 
     def get_labels(self):
