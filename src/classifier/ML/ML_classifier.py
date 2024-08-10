@@ -9,7 +9,7 @@ class MLClassifier:
         with open(self.label, 'r') as file:
             self.classes = file.readlines()
 
-    def __call__(self, img, boxes, kps, kps_exist):
+    def __call__(self, boxes, kps, kps_exist, **kwargs):
         actions = []
 
         for box, kp in zip(boxes, kps):

@@ -1,5 +1,7 @@
 from .ML.ML_classifier import MLClassifier
 from .image.image_classifier import ImageClassifier
+from .ML.seqML_classifier import SeqMLClassifier
+
 import numpy as np
 import cv2
 
@@ -45,10 +47,11 @@ class EnsembleClassifier:
                             cv2.FONT_HERSHEY_PLAIN, 2, action_color, 2)
         return img
 
-    def update(self, image, boxes, kps, kps_exist):
+    def update(self, image, ids, boxes, kps, kps_exist):
+        inputs = {"image": image, "ids": ids, "boxes": boxes, "kps": kps, "kps_exist": kps_exist}
         actions = []
         for classifier in self.classifiers:
-            action = classifier(img=image, boxes=boxes, kps=kps, kps_exist=kps_exist)
+            action = classifier(**inputs)
             actions.append(action)
         self.actions = actions
         return actions
