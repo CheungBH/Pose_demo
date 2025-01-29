@@ -37,13 +37,15 @@ class HumanDetector:
 
     def process(self, frame, print_time=False):
         with torch.no_grad():
-            self.ids, self.boxes, self.dets_cls, self.kps, self.kps_scores = [], [], [], [], []
+            # self.ids, self.boxes, self.dets_cls, self.kps, self.kps_scores = [], [], [], [], []
             if print_time:
                 curr_time = time.time()
             self.boxes, self.kps, self.kps_scores = self.pose_det.process(frame)
+            prev_assets = torch.cat((self.boxes, self.kps.view(self.kps.shape[0], -1),
+                                     self.kps_scores.view(self.boxes.shape[0], -1)), dim=1)
             if self.boxes == []:
-                return self.ids, self.boxes, self.dets_cls, self.kps, self.kps_scores
-            pre_box = self.boxes.tolist()
+                return [], [], [], [], []
+
             if hasattr(self, "pose3d"):
                 self.kps_3d = self.pose3d.process(self.kps)
                 if print_time:
@@ -56,11 +58,13 @@ class HumanDetector:
                 print("Detector uses: {}s".format(round((time.time() - curr_time), 4)))
                 curr_time = time.time()
             if len(self.boxes) > 0:
-                self.dets_cls = self.boxes[:, -1]
-                self.ids, self.boxes = self.tracker.update(self.boxes.cpu(), copy.deepcopy(frame))
-                tracking_box = [arr.tolist() for arr in self.boxes]
-                self.boxes, self.ids = reorder_tracking_boxes(pre_box, tracking_box, self.ids)
-                self.boxes = [np.array(sublist) for sublist in self.boxes]
+
+                assets = self.tracker.update(prev_assets.cpu(), copy.deepcopy(frame), direct_return=True)
+                assets = torch.Tensor(assets)
+                if not len(assets):
+                    return [], [], [], [], []
+
+                self.boxes, self.ids, self.dets_cls, self.kps, self.kps_scores = assets[..., :4], assets[..., 4], assets[..., 5], assets[..., 7:-17].view(len(assets), 17, 2), assets[..., -17:].view(len(assets), 17, 1)
                 if print_time:
                     print("Tracker uses: {}s".format(round((time.time() - curr_time), 4)))
                     curr_time = time.time()
@@ -94,7 +98,7 @@ class HumanDetector:
 
     def convert_result_to_tensor(self):
         self.ids = tensor(self.ids)
-        print(self.boxes)
+        # print(self.boxes)
         self.boxes = tensor(self.boxes)
 
     def debug_for_tracking(self, frame):

@@ -1,3 +1,5 @@
+import torch
+
 def calculate_center(bbox):
     """Calculate the center of a bounding box."""
     x1, y1, x2, y2 = bbox[:4]
@@ -12,31 +14,31 @@ def reorder_tracking_boxes(original_boxes, tracking_boxes, ids):
     updated_indices = []
     used_indices = set()
 
-    for original_bbox in original_boxes:
-        original_center = calculate_center(original_bbox)
+    for tracking_bbox in tracking_boxes:
+        tracking_center = calculate_center(tracking_bbox)
         closest_box = None
         closest_distance = float('inf')
         closest_index = 1
 
-        for tracking_idx, tracking_bbox in enumerate(tracking_boxes):
-            if tracking_idx in used_indices:
+        for original_idx, original_bbox in enumerate(original_boxes):
+            if original_idx in used_indices:
                 continue
 
-            tracking_center = calculate_center(tracking_bbox)
-            distance = ((original_center[0] - tracking_center[0]) ** 2 +
-                        (original_center[1] - tracking_center[1]) ** 2) ** 0.5
+            original_center = calculate_center(original_bbox)
+            distance = ((tracking_center[0] - original_center[0]) ** 2 +
+                        (tracking_center[1] - original_center[1]) ** 2) ** 0.5
 
             if distance < closest_distance:
                 closest_distance = distance
-                closest_box = tracking_bbox
-                closest_index = tracking_idx
+                closest_box = original_bbox
+                closest_index = original_idx
 
-        reordered_tracking_boxes.append(closest_box)
+        reordered_tracking_boxes.append(closest_box.tolist())
         updated_indices.append(ids[closest_index])
         used_indices.add(closest_index)
 
         reordered_tracking_boxes = list(filter(lambda x: x is not None, reordered_tracking_boxes))
-    return reordered_tracking_boxes, updated_indices
+    return torch.Tensor(reordered_tracking_boxes), updated_indices
 
 if __name__ == '__main__':
     # Example usage

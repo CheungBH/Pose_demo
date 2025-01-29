@@ -14,7 +14,7 @@ class PersonTracker:
         else:
             raise NotImplementedError("sort type {} not implemented".format(sort_type))
 
-    def update(self, boxes, ori_img):
+    def update(self, boxes, ori_img, direct_return=False):
         self.ids, self.boxes = [], []
         boxes = self.box_xyxy2xywh(boxes) if isinstance(self.tracker, DeepSort) else boxes
         conf = torch.ones(len(boxes))
@@ -22,6 +22,8 @@ class PersonTracker:
             tracked_boxes = self.tracker.update(boxes, conf, ori_img)
         else:
             tracked_boxes = self.tracker.update(boxes)
+        if direct_return:
+            return tracked_boxes
         for tracked_box in tracked_boxes:
             self.ids.append(int(tracked_box[4]))
             self.boxes.append(tracked_box[:4])
