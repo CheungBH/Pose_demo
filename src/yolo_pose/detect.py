@@ -17,7 +17,8 @@ from config.config import out_size
 
 class YoloPose:
 
-    def __init__(self, weights, device="cuda:0", img_size=640, conf_thresh=0.25, nms_thresh=0.45):
+    def __init__(self, weights, device="cuda:0", img_size=640, conf_thresh=0.25, nms_thresh=0.45, agnostic=False):
+        self.agnostic = agnostic
         self.device = device
         self.half = True if self.device != "cpu" else False
         self.model = attempt_load(weights, map_location=device)
@@ -46,7 +47,7 @@ class YoloPose:
             img = img.unsqueeze(0)
 
         pred = self.model(img, augment=False)[0]
-        pred = non_max_suppression(pred, self.conf_thresh, self.nms_thresh, classes=None, agnostic=False,
+        pred = non_max_suppression(pred, self.conf_thresh, self.nms_thresh, classes=None, agnostic=self.agnostic,
                                    kpt_label=True)[0]
 
         # boxes, kps, kps_score = [], [], []

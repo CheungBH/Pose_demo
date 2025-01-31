@@ -14,6 +14,7 @@ tensor = torch.Tensor
 
 from .tracker.visualize import plot_id_box
 
+agnostic = True
 
 class HumanDetector:
     def __init__(self, detector_cfg, detector_weight, estimator_weight, estimator_model_cfg, estimator_data_cfg,
@@ -28,7 +29,7 @@ class HumanDetector:
         # self.detector = PersonDetector(detector_cfg, detector_weight, device)
         # self.estimator = PoseEstimator(estimator_weight, estimator_model_cfg, estimator_data_cfg, device=device)
         # detector_weight = "/Users/cheungbh/Documents/lab_code/yolov7_pose/weights/yolov7-w6-pose.pt"
-        self.pose_det = YoloPose(detector_weight, device=self.device)
+        self.pose_det = YoloPose(detector_weight, device=self.device, agnostic=agnostic)
         self.tracker = PersonTracker(sort_type, device=device, model_path=deepsort_weight)
         self.classifier = EnsembleClassifier(classifiers_type, classifiers_weights, classifiers_config,
                                              classifiers_label, None, device=device)
