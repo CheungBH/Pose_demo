@@ -42,10 +42,11 @@ class HumanDetector:
             if print_time:
                 curr_time = time.time()
             self.boxes, self.kps, self.kps_scores = self.pose_det.process(frame)
-            prev_assets = torch.cat((self.boxes, self.kps.view(self.kps.shape[0], -1),
-                                     self.kps_scores.view(self.boxes.shape[0], -1)), dim=1)
             if self.boxes == []:
                 return [], [], [], [], []
+            prev_assets = torch.cat((self.boxes, self.kps.view(self.kps.shape[0], -1),
+                                     self.kps_scores.view(self.boxes.shape[0], -1)), dim=1)
+
 
             if hasattr(self, "pose3d"):
                 self.kps_3d = self.pose3d.process(self.kps)
